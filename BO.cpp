@@ -48,7 +48,13 @@ void updateK(Eigen::VectorXd x){
 }
 
 double mu(Eigen::VectorXd x){
-	return 0;
+	if (t == 0)
+		return mean;
+
+	else{
+		VectorXd kx = k(x);
+		return mean + kx.transpose() * Kinv.topLeftCorner(t, t) * (f.head(t)-mean*VectorXd::Constant(t,1));
+	}
 }
 
 
