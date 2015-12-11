@@ -15,7 +15,7 @@ double cdf(double x){
 }
 
 double kernel(Eigen::VectorXd x1, Eigen::VectorXd x2){
-	return exp(-0.5 * (x1-x2).norm());
+	return exp(-0.5 * (x1-x2).squaredNorm());
 }
 
 VectorXd bound_rand(int num){

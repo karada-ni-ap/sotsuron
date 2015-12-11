@@ -2,9 +2,9 @@
 using namespace Eigen;
 
 extern		 int t=0;
-extern const int T=50;
+extern const int T=30;
 
-extern const int d=2;
+extern const int d=3;
 extern const int m=2;
 extern const int n=2;
 

@@ -16,7 +16,7 @@ int main(void)
 		//【tはこの時点におけるデータセットのサイズ】//
 
 
-		//次のサンプル点の決定
+		//次のサンプル点(t+1点目)の決定
 		x_next = argmax_u();
 
 		
@@ -57,5 +57,10 @@ if (t > 0){
 //Kinvの丸め誤差
 MatrixXd A = K*Kinv;
 cout << A(T-1, T-2) << endl;
+
+//uの勾配
+if (t > 0){
+	cout << u_over_x(VectorXd::Constant(d, 0.1)).transpose() << endl;
+}
 
 */

@@ -83,6 +83,18 @@ VectorXd u_over_k(VectorXd x){
 	return Kinv.topLeftCorner(t, t)*v;
 }
 
+MatrixXd k_over_x(VectorXd x){
+	MatrixXd A = MatrixXd::Zero(d, t);
+	for (int j = 0; j < t; j++){
+		A.col(j) = kernel(D_q.col(j), x) * (D_q.col(j) - x);
+	}
+	return A;
+}
+
+VectorXd u_over_x(VectorXd x){
+	return k_over_x(x)*u_over_k(x);
+}
+
 Eigen::VectorXd argmax_u(){
 	if (t == 0){
 		//‰Šú“_‚Íƒ‰ƒ“ƒ_ƒ€
