@@ -12,29 +12,31 @@ int main(void)
 {	
 	VectorXd x_next = VectorXd::Zero(d);
 
-	for (t=0; t < T; t++){
-		//mu,sigmaの確認
-		if (t > 0){
-			cout << Kinv.topLeftCorner(t, t) << endl;
-			cout << "mu : " << mu(VectorXd::Constant(d,0.5)) << endl;
-			cout << "---------------------------------------" << endl;
+	for (t = 0; t < T; t++){
+		//【tはこの時点におけるデータセットのサイズ】//
+
+		//uのテスト
+		if (t > 0 && t%5 == 0){
+			cout << "t=" << t << endl;
+			cout << "原点 : " << u(VectorXd::Zero(d)) << endl;
+			cout << "ズレ : " << u(VectorXd::Constant(d, 0.5)) << endl;
 		}
-		//【tは現在のデータセットのサイズ】//
-		
+
+
 		//次のサンプル点の決定
-		if (t == 0)
-			x_next = VectorXd::Random(d);
-		else
-			x_next = argmax_u();
+		x_next = argmax_u();
+
 		
 		//データセットの更新
 		D_q.col(t) = x_next;
 		f(t) = obj(x_next);
-		//【この時点でデータセットのサイズはt+1】//
 		maxf = max(f(t), maxf);
-		updateK(x_next);
-		//【updateKが行われたとき，Kのサイズはt+1】//
+		//【この時点でデータセットのサイズはt+1】//
+		
 
+		//KとKinvの更新
+		updateK(x_next);
+		//【updateKが行われた後，Kのサイズはt+1】//
 	}
 
 	//MatrixXd A = K*Kinv;

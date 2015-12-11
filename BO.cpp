@@ -53,20 +53,31 @@ double mu(Eigen::VectorXd x){
 
 	else{
 		VectorXd kx = k(x);
-		return mean + kx.transpose() * Kinv.topLeftCorner(t, t) * (f.head(t)-mean*VectorXd::Constant(t,1));
+		return mean + kx.transpose() * Kinv.topLeftCorner(t, t) * (f.head(t)-VectorXd::Constant(t,mean));
 	}
 }
 
 
-double sigma2(Eigen::VectorXd x){
-	return 0;
+double sigma(Eigen::VectorXd x){
+	VectorXd kx = k(x);
+	return sqrt(1 - kx.transpose() * Kinv.topLeftCorner(t, t) * kx);
 }
 
 
 double u(Eigen::VectorXd x){
-	return 0;
+	double mu_ = mu(x);
+	double sigma_ = sigma(x);
+	double gamma = (mu_ - maxf) / sigma_;
+	return (mu_ - maxf)*cdf(gamma) + sigma_*pdf(gamma);
 }
 
 Eigen::VectorXd argmax_u(){
-	return VectorXd::Random(d);
+	if (t == 0){
+		//‰Šú“_‚Íƒ‰ƒ“ƒ_ƒ€
+		return bound_rand(d);
+	}
+	else{
+		//‚±‚±‚Åu‚ÌÅ‘å‰»‚ğs‚¤
+		return bound_rand(d);
+	}
 }

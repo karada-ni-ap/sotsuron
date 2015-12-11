@@ -6,6 +6,7 @@
 using namespace std;
 using namespace Eigen;
 
-double pdf(Eigen::VectorXd x);
+double pdf(double x);
 double cdf(double x);
 double kernel(Eigen::VectorXd x1, Eigen::VectorXd x2);
+VectorXd bound_rand(int num);

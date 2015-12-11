@@ -2,11 +2,14 @@
 using namespace Eigen;
 
 extern		 int t=0;
-extern const int T=5;
+extern const int T=150;
 
-extern const int d=2;
+extern const int d=6;
 extern const int m=2;
 extern const int n=2;
+
+extern const double ub = 2.0;
+extern const double lb = -2.0;
 
 extern const int mean=0;
 

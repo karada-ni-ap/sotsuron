@@ -8,6 +8,9 @@ extern const int d; // xの次元
 extern const int m; // yの次元
 extern const int n; // 対称行列のサイズ
 
+extern const double ub; // 超立方体の上界
+extern const double lb; // 超立方体の下界
+
 extern const int mean; // GPの事前分布
 
 extern double maxf; // データセットの最大値
