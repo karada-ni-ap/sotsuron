@@ -6,5 +6,5 @@ using namespace std;
 using namespace Eigen;
 
 double obj(VectorXd x){
-	return -sqrt(x.norm());
+	return -sqrt(x.squaredNorm());
 }

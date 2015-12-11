@@ -6,6 +6,7 @@
 using namespace std;
 using namespace Eigen;
 
+extern VectorXd m1 = VectorXd::Constant(T,mean);
 
 Eigen::VectorXd k(Eigen::VectorXd x){
 	if (t == 0){
@@ -53,7 +54,7 @@ double mu(Eigen::VectorXd x){
 
 	else{
 		VectorXd kx = k(x);
-		return mean + kx.transpose() * Kinv.topLeftCorner(t, t) * (f.head(t)-VectorXd::Constant(t,mean));
+		return mean + kx.transpose() * Kinv.topLeftCorner(t, t) * (f.head(t)-m1.head(t));
 	}
 }
 
@@ -71,6 +72,17 @@ double u(Eigen::VectorXd x){
 	return (mu_ - maxf)*cdf(gamma) + sigma_*pdf(gamma);
 }
 
+VectorXd u_over_k(VectorXd x){
+	double mu_ = mu(x);
+	double sigma_ = sigma(x);
+	double gamma = (mu_ - maxf) / sigma_;
+
+	VectorXd v = VectorXd::Zero(t);
+	v = cdf(gamma)*(f.head(t) - m1.head(t)) - (pdf(gamma) / sigma_)*k(x);
+
+	return Kinv.topLeftCorner(t, t)*v;
+}
+
 Eigen::VectorXd argmax_u(){
 	if (t == 0){
 		//‰Šú“_‚Íƒ‰ƒ“ƒ_ƒ€
@@ -79,5 +91,6 @@ Eigen::VectorXd argmax_u(){
 	else{
 		//‚±‚±‚Åu‚ÌÅ‘å‰»‚ğs‚¤
 		return bound_rand(d);
+		//return VectorXd::Random(d);
 	}
 }
