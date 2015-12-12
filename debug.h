@@ -9,4 +9,5 @@
 using namespace std;
 using namespace Eigen;
 
-void debug();
+void debug_inside();
+void debug_last();

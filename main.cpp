@@ -16,7 +16,7 @@ int main(void)
 
 	for (t = 0; t < T; t++){
 		//【tはこの時点におけるデータセットのサイズ】//
-		debug();
+		debug_inside();
 
 		//次のサンプル点(t+1点目)の決定
 		x_next = argmax_u();
@@ -33,7 +33,7 @@ int main(void)
 		//【update_Kが行われた後，Kのサイズはt+1】//
 	}
 
-	cout << "maxf is " << maxf << endl;
+	debug_last();
 
 	return 0;
 }

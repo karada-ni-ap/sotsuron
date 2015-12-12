@@ -9,7 +9,7 @@
 using namespace std;
 using namespace Eigen;
 
-void debug(){
+void debug_inside(){
 	int interval = 5;
 
 	VectorXd gntn = VectorXd::Constant(d, 0.0);
@@ -34,4 +34,19 @@ void debug(){
 		//cout << "-----------------------------------------------" << endl;
 	}
 
+}
+
+void debug_last(){
+	//cout << "maxf is " << maxf << endl;
+
+	for (int i = 0; i < 20; i++){
+		MatrixXd H = MatrixXd::Identity(d, d);
+		VectorXd s = bound_rand(d);
+		VectorXd y = bound_rand(d);
+		//cout << update_H(H, s, y) << endl;
+
+		//VectorXd X = bound_rand(d);
+		//VectorXd G = u_over_x(X);
+		//cout << back_track(X, G, G) << endl;
+	}
 }

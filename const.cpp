@@ -2,19 +2,18 @@
 using namespace Eigen;
 
 extern		 int t=0;
-extern const int T=50;
+extern const int T=30;
 
 extern const int d=2;
 extern const int m=2;
 extern const int n=2;
 
-extern const double Ub = 1.0;
-extern const double Lb = -1.0;
+extern const double Ub = 2.0;
+extern const double Lb = -2.0;
 
 extern const double Alp0 = 0.5;
 extern const double rho = 0.9;
 
-//extern const double Alp = 0.01;
 //extern const double conv_thre = 1.0e-12;
 extern const int    ite_bfgs = 10;
 extern const int	num_bfgs = 50;
