@@ -19,5 +19,5 @@ double kernel(Eigen::VectorXd x1, Eigen::VectorXd x2){
 }
 
 VectorXd bound_rand(int num){
-	return VectorXd::Constant(num, (ub + lb) / 2) + ((ub - lb)/2)* VectorXd::Random(num);
+	return VectorXd::Constant(num, (Ub + Lb) / 2) + ((Ub - Lb)/2)* VectorXd::Random(num);
 }

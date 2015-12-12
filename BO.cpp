@@ -8,6 +8,8 @@ using namespace Eigen;
 
 extern VectorXd m1 = VectorXd::Constant(T,mean);
 
+
+//#INDなし
 Eigen::VectorXd k(Eigen::VectorXd x){
 	if (t == 0){
 		//【起こり得ない状況】//
@@ -48,6 +50,7 @@ void updateK(Eigen::VectorXd x){
 	}
 }
 
+//#INDなし
 double mu(Eigen::VectorXd x){
 	if (t == 0)
 		return mean;
@@ -59,30 +62,50 @@ double mu(Eigen::VectorXd x){
 }
 
 
+//#INDなし
 double sigma(Eigen::VectorXd x){
 	VectorXd kx = k(x);
-	return sqrt(1 - kx.transpose() * Kinv.topLeftCorner(t, t) * kx);
+	double sigma2 = 1 - kx.transpose() * Kinv.topLeftCorner(t, t) * kx;
+
+	if (sigma2 < 0)
+		return 0;
+	else
+		return sqrt(sigma2);
 }
 
 
 double u(Eigen::VectorXd x){
-	double mu_ = mu(x);
 	double sigma_ = sigma(x);
-	double gamma = (mu_ - maxf) / sigma_;
-	return (mu_ - maxf)*cdf(gamma) + sigma_*pdf(gamma);
+
+	if (sigma_ < sigma_thre)
+		return 0.0;
+
+	else{
+		double mu_ = mu(x);
+		double gamma = (mu_ - maxf) / sigma_;
+		return (mu_ - maxf)*cdf(gamma) + sigma_*pdf(gamma);
+	}
 }
 
+//#INDなし
 VectorXd u_over_k(VectorXd x){
-	double mu_ = mu(x);
 	double sigma_ = sigma(x);
-	double gamma = (mu_ - maxf) / sigma_;
 
-	VectorXd v = VectorXd::Zero(t);
-	v = cdf(gamma)*(f.head(t) - m1.head(t)) - (pdf(gamma) / sigma_)*k(x);
+	if (sigma_ < sigma_thre)
+		return VectorXd::Zero(t);
 
-	return Kinv.topLeftCorner(t, t)*v;
+	else{
+		double mu_ = mu(x);
+		double gamma = (mu_ - maxf) / sigma_;
+
+		VectorXd v = VectorXd::Zero(t);
+		v = cdf(gamma)*(f.head(t) - m1.head(t)) - (pdf(gamma) / sigma_)*k(x);
+
+		return Kinv.topLeftCorner(t, t)*v;
+	}
 }
 
+//#INDなし
 MatrixXd k_over_x(VectorXd x){
 	MatrixXd A = MatrixXd::Zero(d, t);
 	for (int j = 0; j < t; j++){
@@ -91,18 +114,7 @@ MatrixXd k_over_x(VectorXd x){
 	return A;
 }
 
+//#INDなし
 VectorXd u_over_x(VectorXd x){
 	return k_over_x(x)*u_over_k(x);
-}
-
-Eigen::VectorXd argmax_u(){
-	if (t == 0){
-		//初期点はランダム
-		return bound_rand(d);
-	}
-	else{
-		//ここでuの最大化を行う
-		return bound_rand(d);
-		//return VectorXd::Random(d);
-	}
 }

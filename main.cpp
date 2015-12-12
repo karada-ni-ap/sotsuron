@@ -4,6 +4,8 @@
 #include "BO.h"
 #include "myfunc.h"
 #include "obj.h"
+#include "argmax.h"
+#include "debug.h"
 
 using namespace std;
 using namespace Eigen;
@@ -14,11 +16,10 @@ int main(void)
 
 	for (t = 0; t < T; t++){
 		//【tはこの時点におけるデータセットのサイズ】//
-
+		debug();
 
 		//次のサンプル点(t+1点目)の決定
 		x_next = argmax_u();
-
 		
 		//データセットの更新
 		D_q.col(t) = x_next;
@@ -30,37 +31,9 @@ int main(void)
 		//KとKinvの更新
 		updateK(x_next);
 		//【updateKが行われた後，Kのサイズはt+1】//
-
 	}
+
+	cout << "maxf is " << maxf << endl;
 
 	return 0;
 }
-
-///Debug///
-/*
-
-//uのテスト
-if (t > 0 && t % 5 == 0){
-	cout << "t=" << t << endl;
-	cout << "原点 : " << u(VectorXd::Zero(d)) << endl;
-	cout << "ズレ : " << u(VectorXd::Constant(d, 0.5)) << endl;
-}
-
-//u_over_kのテスト
-if (t > 0){
-	cout << "t=" << t << endl;
-	cout << "原点 : " << u_over_k(VectorXd::Zero(d)).transpose() << endl;
-	cout << "ズレ : " << u_over_k(VectorXd::Constant(d, 0.5)).transpose() << endl;
-	cout << "-----------------------------------------------------------" << endl;
-}
-
-//Kinvの丸め誤差
-MatrixXd A = K*Kinv;
-cout << A(T-1, T-2) << endl;
-
-//uの勾配
-if (t > 0){
-	cout << u_over_x(VectorXd::Constant(d, 0.1)).transpose() << endl;
-}
-
-*/
