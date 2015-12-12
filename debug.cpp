@@ -10,7 +10,7 @@ using namespace std;
 using namespace Eigen;
 
 void debug_inside(){
-	int interval = 5;
+	int interval = 1;
 
 	VectorXd gntn = VectorXd::Constant(d, 0.0);
 	VectorXd mgue = VectorXd::Constant(d, 0.5);
@@ -31,22 +31,28 @@ void debug_inside(){
 		//cout << bfgs(mgue).transpose() << endl;
 		//cout << argmax_u().transpose() << endl;
 
-		//cout << "-----------------------------------------------" << endl;
+		cout << x_next.transpose() << endl;
+
+		cout << "-----------------------------------------------" << endl;
 	}
 
 }
 
 void debug_last(){
-	//cout << "maxf is " << maxf << endl;
+	cout << "maxf is " << maxf << endl;
 
-	for (int i = 0; i < 20; i++){
+	for (int i = 0; i < 50; i++){
 		MatrixXd H = MatrixXd::Identity(d, d);
 		VectorXd s = bound_rand(d);
 		VectorXd y = bound_rand(d);
 		//cout << update_H(H, s, y) << endl;
 
-		//VectorXd X = bound_rand(d);
-		//VectorXd G = u_over_x(X);
+		VectorXd X = bound_rand(d);
+		VectorXd G = u_over_x(X);
+		//cout << u_over_x(X) << endl;
+		//cout << bfgs(X).transpose() << endl;
 		//cout << back_track(X, G, G) << endl;
+
+		//cout << "-----------------------------------------------" << endl;
 	}
 }

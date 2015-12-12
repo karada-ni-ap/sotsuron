@@ -6,25 +6,28 @@
 #include "obj.h"
 #include "argmax.h"
 #include "debug.h"
+#include "sev.h"
 
 using namespace std;
 using namespace Eigen;
 
 int main(void)
 {	
-	VectorXd x_next = VectorXd::Zero(d);
-
 	for (t = 0; t < T; t++){
 		//【tはこの時点におけるデータセットのサイズ】//
-		debug_inside();
 
 		//次のサンプル点(t+1点目)の決定
 		x_next = argmax_u();
+		debug_inside();
 		
 		//データセットの更新
 		D_q.col(t) = x_next;
-		f(t) = obj(x_next);
-		maxf = max(f(t), maxf);
+		f(t) = sev(x_next);
+
+		if (f(t)>maxf){
+			maxf = f(t);
+			x_opt = x_next;
+		}
 		//【この時点でデータセットのサイズはt+1】//
 
 
