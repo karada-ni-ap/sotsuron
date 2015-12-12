@@ -10,7 +10,7 @@ using namespace std;
 using namespace Eigen;
 
 void debug(){
-	int interval = 3;
+	int interval = 5;
 
 	VectorXd gntn = VectorXd::Constant(d, 0.0);
 	VectorXd mgue = VectorXd::Constant(d, 0.5);
@@ -28,10 +28,10 @@ void debug(){
 		//cout << k_over_x(VectorXd::Constant(d, -0.5)) << endl;
 		//cout << u_over_x(VectorXd::Constant(d, -0.5)).transpose() << endl;
 
-		cout << bfgs(mgue).transpose() << endl;
+		//cout << bfgs(mgue).transpose() << endl;
 		//cout << argmax_u().transpose() << endl;
 
-		cout << "-----------------------------------------------" << endl;
+		//cout << "-----------------------------------------------" << endl;
 	}
 
 }

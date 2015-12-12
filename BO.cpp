@@ -24,7 +24,7 @@ Eigen::VectorXd k(Eigen::VectorXd x){
 	}
 }
 
-void updateK(Eigen::VectorXd x){
+void update_K(Eigen::VectorXd x){
 	if (t == 0){
 		K(0,0)    = 1;
 		Kinv(0,0) = 1;

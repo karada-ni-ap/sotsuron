@@ -29,8 +29,8 @@ int main(void)
 
 
 		//KとKinvの更新
-		updateK(x_next);
-		//【updateKが行われた後，Kのサイズはt+1】//
+		update_K(x_next);
+		//【update_Kが行われた後，Kのサイズはt+1】//
 	}
 
 	cout << "maxf is " << maxf << endl;

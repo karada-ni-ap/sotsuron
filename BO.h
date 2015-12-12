@@ -4,7 +4,7 @@
 extern VectorXd m1;
 
 Eigen::VectorXd k(Eigen::VectorXd x);
-void updateK(Eigen::VectorXd x);
+void update_K(Eigen::VectorXd x);
 
 double mu(Eigen::VectorXd x);
 double sigma(Eigen::VectorXd x);
