@@ -4,8 +4,6 @@ using namespace Eigen;
 extern		 int t; // BOの反復回数
 extern const int T; // BOの反復回数の上限
 
-extern const int select; // 目的関数の切り替え
-
 extern const int d; // xの次元
 extern const int m; // yの次元
 extern const int n; // 対称行列のサイズ
@@ -34,4 +32,12 @@ extern VectorXd f;			// 値f(x)のデータセット
 extern MatrixXd K;    // 共分散行列
 extern MatrixXd Kinv; // 精度行列
 
-extern const bool bfgs_or_rand; // Debug用
+extern MatrixXd** A; //入力行列
+extern MatrixXd*  B; //iについてのsum
+
+extern const int    ite_subgrad; //最急降下法の反復回数
+extern const int    Alp_subgrad; //最急降下法のステップサイズの初期値
+extern const double rho_subgrad; //最急降下法のステップサイズの減少率
+
+extern const int select;		// 目的関数の切り替え
+extern const bool bfgs_or_rand;	// argmaxの切り替え（BFGS⇔ランダム）

@@ -31,28 +31,22 @@ void debug_inside(){
 		//cout << bfgs(mgue).transpose() << endl;
 		//cout << argmax_u().transpose() << endl;
 
-		cout << x_next.transpose() << endl;
+		//cout << x_next.transpose() << endl;
 
-		cout << "-----------------------------------------------" << endl;
+		//cout << "-----------------------------------------------" << endl;
 	}
 
 }
 
 void debug_last(){
-	cout << "maxf is " << maxf << endl;
+	//cout << "maxf is " << maxf << endl;
 
-	for (int i = 0; i < 50; i++){
-		MatrixXd H = MatrixXd::Identity(d, d);
-		VectorXd s = bound_rand(d);
-		VectorXd y = bound_rand(d);
-		//cout << update_H(H, s, y) << endl;
-
-		VectorXd X = bound_rand(d);
-		VectorXd G = u_over_x(X);
-		//cout << u_over_x(X) << endl;
-		//cout << bfgs(X).transpose() << endl;
-		//cout << back_track(X, G, G) << endl;
-
-		//cout << "-----------------------------------------------" << endl;
+	for (int i = 0; i < (n + 1); i++){
+		for (int j = 0; j < (m + 1); j++){
+			//cout << "A[" << i << "][" << j << "] is" << endl;
+			//cout << A[i][j] << endl;
+			//cout << "-----------------------------------------------" << endl;
+		}
 	}
+	
 }

@@ -13,6 +13,8 @@ using namespace Eigen;
 
 int main(void)
 {	
+	initA();
+
 	for (t = 0; t < T; t++){
 		//【tはこの時点におけるデータセットのサイズ】//
 
