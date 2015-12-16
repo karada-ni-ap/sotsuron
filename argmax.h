@@ -7,7 +7,6 @@
 using namespace std;
 using namespace Eigen;
 
-bool judge(VectorXd x);
 MatrixXd update_H(MatrixXd H, VectorXd s, VectorXd y);
 double back_track(VectorXd X, VectorXd Grad, VectorXd dir);
 VectorXd projection(VectorXd x);

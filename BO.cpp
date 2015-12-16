@@ -2,14 +2,13 @@
 #include <Eigen/Dense>
 #include "const.h"
 #include "myfunc.h"
+#include "obj.h"
 
 using namespace std;
 using namespace Eigen;
 
 extern VectorXd m1 = VectorXd::Constant(T,mean);
 
-
-//#INDÇ»Çµ
 Eigen::VectorXd k(Eigen::VectorXd x){
 	if (t == 0){
 		//ÅyãNÇ±ÇËìæÇ»Ç¢èÛãµÅz//
@@ -50,7 +49,6 @@ void update_K(Eigen::VectorXd x){
 	}
 }
 
-//#INDÇ»Çµ
 double mu(Eigen::VectorXd x){
 	if (t == 0)
 		return mean;
@@ -62,7 +60,6 @@ double mu(Eigen::VectorXd x){
 }
 
 
-//#INDÇ»Çµ
 double sigma(Eigen::VectorXd x){
 	VectorXd kx = k(x);
 	double sigma2 = 1 - kx.transpose() * Kinv.topLeftCorner(t, t) * kx;
@@ -78,7 +75,7 @@ double u(Eigen::VectorXd x){
 	double sigma_ = sigma(x);
 
 	if (sigma_ < sigma_thre)
-		return 0.0;
+		return 0;
 
 	else{
 		double mu_ = mu(x);
@@ -87,7 +84,6 @@ double u(Eigen::VectorXd x){
 	}
 }
 
-//#INDÇ»Çµ
 VectorXd u_over_k(VectorXd x){
 	double sigma_ = sigma(x);
 
@@ -105,7 +101,6 @@ VectorXd u_over_k(VectorXd x){
 	}
 }
 
-//#INDÇ»Çµ
 MatrixXd k_over_x(VectorXd x){
 	MatrixXd A = MatrixXd::Zero(d, t);
 	for (int j = 0; j < t; j++){
@@ -114,7 +109,6 @@ MatrixXd k_over_x(VectorXd x){
 	return A;
 }
 
-//#INDÇ»Çµ
 VectorXd u_over_x(VectorXd x){
 	return k_over_x(x)*u_over_k(x);
 }

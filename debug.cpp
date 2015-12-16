@@ -46,16 +46,19 @@ void debug_last(){
 	//cout << "t is " << t << endl;
 	cout << "maxf is " << maxf << endl;
 
-	for (int z = 0; z < 20; z++){
+	for (int z = 0; z < 100; z++){
 			//VectorXd x = VectorXd::Random(d);
 			//cout << x.transpose() << endl;
 			//cout << projection(x).transpose() << endl;
-			//cout << "-----------------------------------------------" << endl;
 
-			//VectorXd s   = bound_rand(d);
-			//VectorXd y   = u_over_x(s);
+			//VectorXd x = bound_rand(d);
+			//VectorXd y = bound_rand(d);
+			//VectorXd y = u_over_x(x);
 			//cout << y.transpose() << endl;
-			//VectorXd dir = bound_rand(d);
+			//cout << back_track(x, y, y) << endl;
+			//cout << u_over_x(x).transpose() << endl;
+
+			//cout << "-----------------------------------------------" << endl;
 	}
 	
 }

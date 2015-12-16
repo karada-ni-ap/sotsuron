@@ -7,47 +7,39 @@
 using namespace std;
 using namespace Eigen;
 
-bool judge(VectorXd x){
-	if (	(x.array() >= Lb).all() &&
-			(x.array() <= Ub).all()		)
-		return true;
-	else
-		return false;
-}
-
 MatrixXd update_H(MatrixXd H, VectorXd s, VectorXd y){
-	double S = y.dot(s);
-	double Sinv = 1 / S;
-
-	VectorXd Hy = H*y;
+	if (s.norm() < sigma_thre || y.norm() < sigma_thre)
+		return MatrixXd::Zero(d, d);
 	
+	VectorXd a = s.normalized();
+	VectorXd b = y.normalized();
+	double bta = b.dot(a);
+	
+	VectorXd Hb = H*b;
+
 	return H
-		+ (Sinv + Sinv * Sinv * y.dot(Hy)) * (s * s.transpose())
-		- Sinv * ( Hy*s.transpose() + s*Hy.transpose() );
+		- (a*Hb.transpose() + Hb*a.transpose()) / bta;
+		+ ( s.norm() / (bta*y.norm()) + b.dot(Hb) / (bta*bta) ) * a * a.transpose();
 }
 
 //無限に続くバグあり！！
 double back_track(VectorXd X, VectorXd Grad, VectorXd dir){
 	double Alp  = Alp0;
 	double uX = u(X);
-	double Gd = Grad.transpose()*dir;
-
-	//cout << dir.transpose() << endl;
-	//cout << Gd << endl;
-
+	double Gd = Grad.dot(dir);
 
 	//dirが降下方向でない
-	//H＞Oより，これはありえない(正定値性)
-	if (Gd <= 0){
-		cout << "Gd is negative." << endl;
-		return Alp0;
+	//Hは正定値であるので，本来ありえないが...
+	if (Gd < 0){
+		return 0;
 	}
 
 	//dirが降下方向
 	else {
-		cout << "Gd is positive." << endl;
 		while (true){
-			if (u(X + Alp*dir) >= uX + c1_bfgs*Alp*Gd)
+			if (Alp < sigma_thre && u(X + Alp*dir) < sigma_thre)
+				return 0;
+			else if ( u(X + Alp*dir) >= uX + c1_bfgs*Alp*Gd ) //Armijoの条件を満たす
 				break;
 			else
 				Alp *= rho;
@@ -68,20 +60,27 @@ VectorXd projection(VectorXd x){
 VectorXd bfgs(VectorXd x0){
 	MatrixXd H = MatrixXd::Identity(d, d);
 
-	//VectorXd Xold = VectorXd::Zero(d);
 	VectorXd Xold = x0;
 	VectorXd Xnew = x0;
 
-	//VectorXd Gold = VectorXd::Zero(d);
 	VectorXd Gold = u_over_x(Xnew);
-	VectorXd Gnew = u_over_x(Xnew);
+	VectorXd Gnew = Gold;
 
 	VectorXd dir  = VectorXd::Zero(d);
 	double Alp = 0.1;
 
 	for (int k = 0; k < ite_bfgs; k++){
+		//収束判定
+		if (Gnew.norm() < eps_bfgs		//勾配=0
+			|| u(Xnew) < sigma_thre		//u(x)=0
+			|| Alp < sigma_thre)		//α=0 
+		{
+			break;
+		}	
+		
+		//上昇
 		dir = H*Gnew;
-		//Alp = back_track(Xnew, Gnew, dir);
+		Alp = back_track(Xnew, Gnew, dir);
 
 		Xold = Xnew;
 		Xnew = Xold + Alp*dir;
@@ -90,38 +89,31 @@ VectorXd bfgs(VectorXd x0){
 		Gold = Gnew;
 		Gnew = u_over_x(Xnew);
 
-		if (Gnew.norm() < eps_bfgs) //収束判定
-			break;
-
 		H = update_H(H, Xnew - Xold, Gnew - Gold);
 	}
 	return Xnew;
 }
 
 VectorXd argmax_u(){
-	if (t == 0){
-		//初期点はランダム
+	if (t == 0) //初期点はランダム
 		return bound_rand(d);
-	}
 
-	else if (!bfgs_or_rand)
+	else if (!bfgs_or_rand) // Debug用
 		return bound_rand(d);
 
 	else{
 		//ここでuの最大化を行う
-		double   opt = -1000;
+		double   opt = -Inf;
 		double   utmp = 0;
 		VectorXd Xopt = VectorXd::Random(d);
 		VectorXd Xtmp = VectorXd::Zero(d);
 
 		for (int i = 0; i < num_bfgs; i++){
-			Xtmp = bfgs(bound_rand(d));		//BFGS法の初期点はランダム
-			if (judge(Xtmp)){				//Xtmpが実行可能解
-				utmp = u(Xtmp);
-				if (utmp > opt){			//uの値を更新
-					opt = utmp;
-					Xopt = Xtmp;
-				}
+			Xtmp = bfgs(bound_rand(d));	//BFGS法の初期点はランダム
+			utmp = u(Xtmp);
+			if (utmp > opt){			//uの値を更新
+				opt = utmp;
+				Xopt = Xtmp;
 			}
 		}
 		return Xopt;
