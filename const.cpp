@@ -4,11 +4,16 @@ using namespace Eigen;
 extern const int Inf = 10000;
 
 extern		 int t=0;
-extern const int T=50;
+extern const int T=30;
 
 extern const int d=3;
 extern const int m=3;
 extern const int n=8;
+
+extern const VectorXd Ux = 3.0	*VectorXd::Constant(d, 1.0);
+extern const VectorXd Lx = -1.0	*VectorXd::Constant(d, 1.0);
+extern const VectorXd Uy = 1.0	*VectorXd::Constant(m, 1.0);
+extern const VectorXd Ly = -1.0	*VectorXd::Constant(m, 1.0);
 
 extern const double Ub = 5.0;
 extern const double Lb = -5.0;

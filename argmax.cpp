@@ -53,8 +53,8 @@ double back_track(VectorXd X, VectorXd Grad, VectorXd dir){
 VectorXd projection(VectorXd x){
 	VectorXd v = x;
 	for (int i = 0; i < d; i++){
-		if (x(i) > Ub)		v(i) = Ub;
-		else if (x(i) < Lb)	v(i) = Lb;
+		if (x(i) > Ux(i))		v(i) = Ux(i);
+		else if (x(i) < Lx(i))	v(i) = Lx(i);
 	}
 	return v;
 }
