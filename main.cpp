@@ -24,7 +24,7 @@ int main(void)
 		
 		//データセットの更新
 		D_q.col(t) = x_next;
-		f(t) = sev(x_next);
+		f(t) = obj(x_next, select);
 
 		if (f(t)>maxf){
 			maxf = f(t);
@@ -38,6 +38,7 @@ int main(void)
 		//【update_Kが行われた後，Kのサイズはt+1】//
 	}
 
+	//このときt=Tで，データセットのサイズもT．
 	debug_last();
 
 	return 0;

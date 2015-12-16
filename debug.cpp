@@ -9,7 +9,7 @@
 using namespace std;
 using namespace Eigen;
 
-void debug_inside(){
+void debug_inside(){ //tはデータセットのサイズ
 	int interval = 1;
 
 	VectorXd gntn = VectorXd::Constant(d, 0.0);
@@ -33,7 +33,9 @@ void debug_inside(){
 
 		cout << "t is " << t << endl;
 		cout << x_next.transpose() << endl;
-		cout << "f(t) is " << f(t-1) << endl;
+		//cout << u_over_x(x_next) << endl;
+		//cout << back_track(x_next, u_over_x(x_next), u_over_x(x_next)) << endl;
+		//cout << "f(t) is " << f(t-1) << endl;
 
 		cout << "-----------------------------------------------" << endl;
 	}
@@ -41,13 +43,19 @@ void debug_inside(){
 }
 
 void debug_last(){
+	//cout << "t is " << t << endl;
 	cout << "maxf is " << maxf << endl;
 
-	for (int i = 0; i < 10; i++){
-			VectorXd s   = bound_rand(d);
-			VectorXd y   = u_over_x(s);
-			VectorXd dir = bound_rand(d);
-			//cout << i  << " is " << back_track(s, y, dir) << endl;;
+	for (int z = 0; z < 20; z++){
+			//VectorXd x = VectorXd::Random(d);
+			//cout << x.transpose() << endl;
+			//cout << projection(x).transpose() << endl;
+			//cout << "-----------------------------------------------" << endl;
+
+			//VectorXd s   = bound_rand(d);
+			//VectorXd y   = u_over_x(s);
+			//cout << y.transpose() << endl;
+			//VectorXd dir = bound_rand(d);
 	}
 	
 }

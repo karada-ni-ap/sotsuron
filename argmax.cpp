@@ -30,7 +30,11 @@ MatrixXd update_H(MatrixXd H, VectorXd s, VectorXd y){
 double back_track(VectorXd X, VectorXd Grad, VectorXd dir){
 	double Alp  = Alp0;
 	double uX = u(X);
-	double Gd = Grad.dot(dir);
+	double Gd = Grad.transpose()*dir;
+
+	//cout << dir.transpose() << endl;
+	//cout << Gd << endl;
+
 
 	//dir‚ª~‰º•ûŒü‚Å‚È‚¢
 	//H„O‚æ‚èC‚±‚ê‚Í‚ ‚è‚¦‚È‚¢(³’è’l«)
@@ -50,6 +54,15 @@ double back_track(VectorXd X, VectorXd Grad, VectorXd dir){
 		}
 		return Alp;
 	}
+}
+
+VectorXd projection(VectorXd x){
+	VectorXd v = x;
+	for (int i = 0; i < d; i++){
+		if (x(i) > Ub)		v(i) = Ub;
+		else if (x(i) < Lb)	v(i) = Lb;
+	}
+	return v;
 }
 
 VectorXd bfgs(VectorXd x0){
@@ -72,17 +85,13 @@ VectorXd bfgs(VectorXd x0){
 
 		Xold = Xnew;
 		Xnew = Xold + Alp*dir;
+		Xnew = projection(Xnew);
 
 		Gold = Gnew;
 		Gnew = u_over_x(Xnew);
 
 		if (Gnew.norm() < eps_bfgs) //Žû‘©”»’è
 			break;
-
-		if (!judge(Xnew)){ //BOX§–ñ‚ð–ž‚½‚³‚È‚¢
-			//cout << "out of BOX" << endl;
-			return Xold;
-		}
 
 		H = update_H(H, Xnew - Xold, Gnew - Gold);
 	}

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <Eigen/Dense>
 #include "const.h"
+#include "sev.h"
 
 using namespace std;
 using namespace Eigen;
@@ -10,6 +11,9 @@ double obj(VectorXd x, int select){
 
 	switch (select)
 	{
+	case 0:
+		return sev(x);
+
 	case 1:
 		return -sqrt(x.squaredNorm());
 

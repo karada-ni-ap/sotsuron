@@ -1,6 +1,6 @@
 #include <iostream>
 #include <Eigen/Dense>
-#include "obj.h"
+#include <math.h>
 #include "const.h"
 #include "myfunc.h"
 
@@ -33,7 +33,7 @@ double half_ip(MatrixXd X, VectorXd p){
 }
 
 double sev(VectorXd x){
-	return obj(x,select);
+	//return obj(x,select); //debug
 
 	for (int j = 0; j< (m + 1); j++){
 		B[j] = A[0][j];
@@ -47,6 +47,7 @@ double sev(VectorXd x){
 	VectorXd y   = VectorXd::Zero(m);
 	VectorXd dir = VectorXd::Zero(m);
 	double   min = 0;
+	double   opt = -Inf;
 	double   Alp = Alp_subgrad;
 
 	//最急降下法
@@ -60,16 +61,15 @@ double sev(VectorXd x){
 		pn  = es.eigenvectors().col(0);	//Axyの最小固有ベクトル
 		min = es.eigenvalues()(0);		//Axyの最小固有値
 
-		cout << min << endl;
+		opt = min>opt ? min : opt;
 
 		for (int j = 1; j <= m; j++){
 			dir(j-1) = half_ip(B[j], pn);
 		}
 		
-		y += Alp*dir;
-		Alp *= rho_subgrad;	
+		y += Alp*dir;					//yの更新
+		Alp = Alp_subgrad / sqrt(k+1);	//ステップサイズの更新
 	}
 
-	cout << "------------------------------------" << endl;
-	//return min;
+	return opt;
 }

@@ -1,6 +1,8 @@
 #include <Eigen/Dense>
 using namespace Eigen;
 
+extern const int Inf; //大きい値
+
 extern		 int t; // BOの反復回数
 extern const int T; // BOの反復回数の上限
 
@@ -37,8 +39,7 @@ extern MatrixXd** A; //入力行列
 extern MatrixXd*  B; //iについてのsum
 
 extern const int    ite_subgrad; //最急降下法の反復回数
-extern const int    Alp_subgrad; //最急降下法のステップサイズの初期値
-extern const double rho_subgrad; //最急降下法のステップサイズの減少率
+extern const double Alp_subgrad; //最急降下法のステップサイズの初期値
 
 extern const int select;		// 目的関数の切り替え
 extern const bool bfgs_or_rand;	// argmaxの切り替え（BFGS⇔ランダム）

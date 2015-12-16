@@ -1,6 +1,5 @@
 #include <iostream>
 #include <Eigen/Dense>
-#include "obj.h"
 #include "const.h"
 
 using namespace std;
