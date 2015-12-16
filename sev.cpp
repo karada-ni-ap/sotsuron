@@ -33,7 +33,7 @@ double half_ip(MatrixXd X, VectorXd p){
 }
 
 double sev(VectorXd x){
-	//return obj(x,select);
+	return obj(x,select);
 
 	for (int j = 0; j< (m + 1); j++){
 		B[j] = A[0][j];
@@ -71,5 +71,5 @@ double sev(VectorXd x){
 	}
 
 	cout << "------------------------------------" << endl;
-	return min;
+	//return min;
 }

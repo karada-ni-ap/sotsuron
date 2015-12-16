@@ -15,7 +15,6 @@ bool judge(VectorXd x){
 		return false;
 }
 
-//id
 MatrixXd update_H(MatrixXd H, VectorXd s, VectorXd y){
 	double S = y.dot(s);
 	double Sinv = 1 / S;
@@ -27,37 +26,48 @@ MatrixXd update_H(MatrixXd H, VectorXd s, VectorXd y){
 		- Sinv * ( Hy*s.transpose() + s*Hy.transpose() );
 }
 
-//id
+//無限に続くバグあり！！
 double back_track(VectorXd X, VectorXd Grad, VectorXd dir){
 	double Alp  = Alp0;
 	double uX = u(X);
 	double Gd = Grad.dot(dir);
 
-	while(true){
-		if (u(X + Alp*dir) >= uX + Alp*Gd)
-			break;
-		else
-			Alp *= rho;
+	//dirが降下方向でない
+	//H＞Oより，これはありえない(正定値性)
+	if (Gd <= 0){
+		cout << "Gd is negative." << endl;
+		return Alp0;
 	}
-	return Alp;
+
+	//dirが降下方向
+	else {
+		cout << "Gd is positive." << endl;
+		while (true){
+			if (u(X + Alp*dir) >= uX + c1_bfgs*Alp*Gd)
+				break;
+			else
+				Alp *= rho;
+		}
+		return Alp;
+	}
 }
 
-//id？
 VectorXd bfgs(VectorXd x0){
 	MatrixXd H = MatrixXd::Identity(d, d);
 
-	VectorXd Xold = VectorXd::Zero(d);
+	//VectorXd Xold = VectorXd::Zero(d);
+	VectorXd Xold = x0;
 	VectorXd Xnew = x0;
 
-	VectorXd Gold = VectorXd::Zero(d);
+	//VectorXd Gold = VectorXd::Zero(d);
+	VectorXd Gold = u_over_x(Xnew);
 	VectorXd Gnew = u_over_x(Xnew);
 
 	VectorXd dir  = VectorXd::Zero(d);
-	double Alp = 0.05;
+	double Alp = 0.1;
 
 	for (int k = 0; k < ite_bfgs; k++){
 		dir = H*Gnew;
-
 		//Alp = back_track(Xnew, Gnew, dir);
 
 		Xold = Xnew;
@@ -66,8 +76,13 @@ VectorXd bfgs(VectorXd x0){
 		Gold = Gnew;
 		Gnew = u_over_x(Xnew);
 
-		if (Gnew.norm() < eps_bfgs)
+		if (Gnew.norm() < eps_bfgs) //収束判定
 			break;
+
+		if (!judge(Xnew)){ //BOX制約を満たさない
+			//cout << "out of BOX" << endl;
+			return Xold;
+		}
 
 		H = update_H(H, Xnew - Xold, Gnew - Gold);
 	}

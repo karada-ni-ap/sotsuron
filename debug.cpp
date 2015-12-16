@@ -31,22 +31,23 @@ void debug_inside(){
 		//cout << bfgs(mgue).transpose() << endl;
 		//cout << argmax_u().transpose() << endl;
 
-		//cout << x_next.transpose() << endl;
+		cout << "t is " << t << endl;
+		cout << x_next.transpose() << endl;
+		cout << "f(t) is " << f(t-1) << endl;
 
-		//cout << "-----------------------------------------------" << endl;
+		cout << "-----------------------------------------------" << endl;
 	}
 
 }
 
 void debug_last(){
-	//cout << "maxf is " << maxf << endl;
+	cout << "maxf is " << maxf << endl;
 
-	for (int i = 0; i < (n + 1); i++){
-		for (int j = 0; j < (m + 1); j++){
-			//cout << "A[" << i << "][" << j << "] is" << endl;
-			//cout << A[i][j] << endl;
-			//cout << "-----------------------------------------------" << endl;
-		}
+	for (int i = 0; i < 10; i++){
+			VectorXd s   = bound_rand(d);
+			VectorXd y   = u_over_x(s);
+			VectorXd dir = bound_rand(d);
+			//cout << i  << " is " << back_track(s, y, dir) << endl;;
 	}
 	
 }

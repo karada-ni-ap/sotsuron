@@ -2,21 +2,22 @@
 using namespace Eigen;
 
 extern		 int t=0;
-extern const int T=20;
+extern const int T=50;
 
-extern const int d=3;
-extern const int m=3;
-extern const int n=30;
+extern const int d=2;
+extern const int m=2;
+extern const int n=2;
 
-extern const double Ub = 1.0;
-extern const double Lb = -1.0;
+extern const double Ub = 2.0;
+extern const double Lb = -2.0;
 
-extern const double Alp0 = 0.1;
-extern const double rho = 0.8;
+extern const double Alp0 = 0.2;
+extern const double rho = 0.9;
+extern const double c1_bfgs = 0.9;
 
 extern const double eps_bfgs = 1.0e-12;
-extern const int    ite_bfgs = 100;
-extern const int	num_bfgs = 20;
+extern const int    ite_bfgs = 50;
+extern const int	num_bfgs = 30;
 
 extern const int    mean=0;
 extern const double sigma_thre = 1.0e-14;

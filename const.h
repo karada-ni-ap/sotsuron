@@ -13,6 +13,7 @@ extern const double Lb;  // 超立方体の下界
 
 extern const double Alp0;		 // バックトップ法のαの初期値
 extern const double rho;		 // バックトラック法のρ
+extern const double c1_bfgs;	 // バックトラック法のc1
 
 extern const double eps_bfgs;	 // BFGSの収束判定の閾値
 extern const int    ite_bfgs;	 // BFGSの反復回数
