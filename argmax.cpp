@@ -11,26 +11,28 @@ MatrixXd update_H(MatrixXd H, VectorXd s, VectorXd y){
 	if (s.norm() < sigma_thre || y.norm() < sigma_thre)
 		return MatrixXd::Zero(d, d);
 	
-	VectorXd a = s.normalized();
-	VectorXd b = y.normalized();
-	double bta = b.dot(a);
-	
-	VectorXd Hb = H*b;
+	else{
+		VectorXd a = s.normalized();
+		VectorXd b = y.normalized();
+		double bta = b.dot(a);
 
-	return H
-		- (a*Hb.transpose() + Hb*a.transpose()) / bta;
-		+ ( s.norm() / (bta*y.norm()) + b.dot(Hb) / (bta*bta) ) * a * a.transpose();
+		VectorXd Hb = H*b;
+
+		return H
+			- (a*Hb.transpose() + Hb*a.transpose()) / bta;
+		+(s.norm() / (bta*y.norm()) + b.dot(Hb) / (bta*bta)) * a * a.transpose();
+	}
 }
 
-//無限に続くバグあり！！
 double back_track(VectorXd X, VectorXd Grad, VectorXd dir){
-	double Alp  = Alp0;
+	double Alp = Alp0;
 	double uX = u(X);
 	double Gd = Grad.dot(dir);
 
 	//dirが降下方向でない
 	//Hは正定値であるので，本来ありえないが...
 	if (Gd < 0){
+		//cout << "Gd is not positive..." << endl;
 		return 0;
 	}
 

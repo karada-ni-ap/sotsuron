@@ -38,8 +38,9 @@ extern MatrixXd Kinv; // 精度行列
 extern MatrixXd** A; //入力行列
 extern MatrixXd*  B; //iについてのsum
 
-extern const int    ite_subgrad; //最急降下法の反復回数
-extern const double Alp_subgrad; //最急降下法のステップサイズの初期値
+extern const int    ite_subgrad; //劣勾配法の反復回数
+extern const double Alp_subgrad; //劣勾配法のステップサイズの初期値
+extern const double eps_subgrad; //劣勾配法のε
 
 extern const int select;		// 目的関数の切り替え
 extern const bool bfgs_or_rand;	// argmaxの切り替え（BFGS⇔ランダム）

@@ -68,6 +68,9 @@ double sev(VectorXd x){
 		}
 		
 		y += Alp*dir;					//yの更新
+		if (y.norm() < eps_subgrad)		//収束判定
+			break;
+
 		Alp = Alp_subgrad / sqrt(k+1);	//ステップサイズの更新
 	}
 
