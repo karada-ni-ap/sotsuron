@@ -3,6 +3,7 @@
 #include <math.h>
 #include "const.h"
 #include "myfunc.h"
+#include "argmax.h"
 
 using namespace std;
 using namespace Eigen;
@@ -18,23 +19,26 @@ void initA(){
 		}
 	}
 
-	for (int j = 0; j< (m + 1); j++)
+	for (int j = 0; j < (m + 1); j++)
 		B[j] = MatrixXd::Zero(n, n);
+
+	for (int i = 0; i < (d + 1); i++)
+		C[i] = MatrixXd::Zero(n, n);
 }
 
 double half_ip(MatrixXd X, VectorXd p){
+	int size = p.size();
+	
 	double val = 0;
-	for (int i = 0; i < n; i++){
-		for (int j = i; j < n; j++){
+	for (int i = 0; i < size; i++){
+		for (int j = i; j < size; j++){
 			val += X(i, j)*p(i)*p(j);
 		}
 	}
 	return val;
 }
 
-double sev(VectorXd x){
-	//return obj(x,select); //debug
-
+pair<double, VectorXd> sev_x(VectorXd x, VectorXd y0, VectorXd U, VectorXd L, double Alpha0){
 	for (int j = 0; j< (m + 1); j++){
 		B[j] = A[0][j];
 		for (int i = 1; i <= d; i++){
@@ -44,35 +48,89 @@ double sev(VectorXd x){
 
 	MatrixXd Axy = MatrixXd::Zero(n, n);
 	VectorXd pn  = VectorXd::Zero(n);
-	VectorXd y   = VectorXd::Zero(m);
+	VectorXd y   = y0; //劣勾配法の初期点
 	VectorXd dir = VectorXd::Zero(m);
 	double   min = 0;
-	double   opt = -Inf;
-	double   Alp = Alp_subgrad;
+	double   pre = Inf;
+	double   Alp = Alpha0;
 
-	//最急降下法
+	//yについて劣勾配法
 	for (int k = 0; k < ite_subgrad; k++){
+		//yの更新
+		y += Alp*dir;
+		y = projection(y, U, L);
+
+		//Axyの構成
 		Axy = B[0];
 		for (int j = 1; j <= m; j++)
 			Axy += y(j-1)*B[j];
+
 
 		SelfAdjointEigenSolver<MatrixXd> es(Axy);
 		
 		pn  = es.eigenvectors().col(0);	//Axyの最小固有ベクトル
 		min = es.eigenvalues()(0);		//Axyの最小固有値
 
-		opt = min>opt ? min : opt;
-
 		for (int j = 1; j <= m; j++){
 			dir(j-1) = half_ip(B[j], pn);
 		}
-		
-		y += Alp*dir;					//yの更新
-		if (y.norm() < eps_subgrad)		//収束判定
+
+		if (dir.norm() < eps_subgrad			//収束判定
+			|| abs(pre - min) < eps_subgrad		//ほんとは良くない
+		)
 			break;
 
-		Alp = Alp_subgrad / sqrt(k+1);	//ステップサイズの更新
+		Alp = Alpha0 / sqrt(k+1);	//ステップサイズの更新
+		pre = min;
 	}
 
-	return opt;
+	return make_pair(min, y);
+}
+
+pair<double, VectorXd> sev_y(VectorXd y, VectorXd x0, VectorXd U, VectorXd L, double Alpha0){
+	for (int i = 0; i< (d + 1); i++){
+		C[i] = A[i][0];
+		for (int j = 1; j <= m; j++){
+			C[i] += (y(j - 1))*A[i][j];
+		}
+	}
+
+	MatrixXd Axy = MatrixXd::Zero(n, n);
+	VectorXd pn  = VectorXd::Zero(n);
+	VectorXd x   = x0; //劣勾配法の初期点
+	VectorXd dir = VectorXd::Zero(d);
+	double   min = 0;
+	double   pre = Inf;
+	double   Alp = Alpha0;
+
+	//xについて劣勾配法
+	for (int k = 0; k < ite_subgrad; k++){
+		//xの更新
+		x += Alp*dir;
+		x = projection(x, U, L);
+
+		//Axyの構成
+		Axy = C[0];
+		for (int i = 1; i <= d; i++)
+			Axy += x(i - 1)*C[i];
+
+
+		SelfAdjointEigenSolver<MatrixXd> es(Axy);
+
+		pn = es.eigenvectors().col(0);	//Axyの最小固有ベクトル
+		min = es.eigenvalues()(0);		//Axyの最小固有値
+
+		for (int i = 1; i <= d; i++){
+			dir(i - 1) = half_ip(C[i], pn);
+		}
+
+		if (dir.norm() < eps_subgrad			//収束判定
+			|| abs(pre - min) < eps_subgrad		//ほんとはよくない
+		)
+			break;
+
+		Alp = Alpha0 / sqrt(k + 1);	//ステップサイズの更新
+	}
+
+	return make_pair(min, x);
 }

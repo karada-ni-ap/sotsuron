@@ -5,6 +5,7 @@
 #include "myfunc.h"
 #include "obj.h"
 #include "argmax.h"
+#include "branch_and_cut.h"
 
 using namespace std;
 using namespace Eigen;
@@ -43,8 +44,10 @@ void debug_inside(){ //tはデータセットのサイズ
 }
 
 void debug_last(){
-	//cout << "t is " << t << endl;
-	cout << "maxf is " << maxf << endl;
+	cout << "maxf  is " << maxf << endl;
+	cout << "relax is " << relaxation(Ux, Lx, Uy, Ly) << endl;
+	cout << "local is " << local_opt(Ux, Lx, Uy, Ly) << endl;
+
 
 	for (int z = 0; z < 100; z++){
 			//VectorXd x = VectorXd::Random(d);

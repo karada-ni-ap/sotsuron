@@ -50,11 +50,11 @@ double back_track(VectorXd X, VectorXd Grad, VectorXd dir){
 	}
 }
 
-VectorXd projection(VectorXd x){
-	VectorXd v = x;
-	for (int i = 0; i < d; i++){
-		if (x(i) > Ux(i))		v(i) = Ux(i);
-		else if (x(i) < Lx(i))	v(i) = Lx(i);
+VectorXd projection(VectorXd z, VectorXd U, VectorXd L){
+	VectorXd v = z;
+	for (int i = 0; i < z.size(); i++){
+		if (z(i) > U(i))		v(i) = U(i);
+		else if (z(i) < L(i))	v(i) = L(i);
 	}
 	return v;
 }
@@ -86,7 +86,7 @@ VectorXd bfgs(VectorXd x0){
 
 		Xold = Xnew;
 		Xnew = Xold + Alp*dir;
-		Xnew = projection(Xnew);
+		Xnew = projection(Xnew, Ux, Lx);
 
 		Gold = Gnew;
 		Gnew = u_over_x(Xnew);

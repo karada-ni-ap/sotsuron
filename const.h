@@ -42,10 +42,19 @@ extern MatrixXd Kinv; // 精度行列
 
 extern MatrixXd** A; //入力行列
 extern MatrixXd*  B; //iについてのsum
+extern MatrixXd*  C; //jについてのsum
 
 extern const int    ite_subgrad; //劣勾配法の反復回数
 extern const double Alp_subgrad; //劣勾配法のステップサイズの初期値
 extern const double eps_subgrad; //劣勾配法のε
+
+extern const int    ite_local; //局所最適値関数の反復回数
+extern const double Alp_local; //局所最適値関数の初期ステップサイズ
+extern const double eps_local; //局所最適値関数のε
+
+extern const int    ite_relax; //緩和問題の反復回数
+extern const double Alp_relax; //緩和問題の初期ステップサイズ
+extern const double eps_relax; //緩和問題のε
 
 extern const int select;		// 目的関数の切り替え
 extern const bool bfgs_or_rand;	// argmaxの切り替え（BFGS⇔ランダム）
