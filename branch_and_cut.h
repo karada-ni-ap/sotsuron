@@ -21,9 +21,28 @@ public:
 	classQ* next;
 	classQ* prev;
 
+	classQ(){
+		next = NULL;
+		prev = NULL;
+	}
+
 	void makeQ(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly);
 	pair<classQ, classQ> devide();
 	void calculate_lo();
+};
+
+class Qlist{
+public:
+	classQ root;
+
+	Qlist(){
+		root.next = &root;
+		root.prev = &root;
+	}
+
+	void add(classQ Q);
+	classQ extract();
+	void delete_tail(double L);
 };
 
 double branch_and_cut();

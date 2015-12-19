@@ -1,5 +1,6 @@
 #include <iostream>
 #include <Eigen/Dense>
+#include <time.h>
 #include "const.h"
 #include "BO.h"
 #include "myfunc.h"
@@ -15,12 +16,14 @@ int main(void)
 {	
 	initA();
 
+	clock_t BO_s = clock();
+
 	for (t = 0; t < T; t++){
 		//【tはこの時点におけるデータセットのサイズ】//
 
 		//次のサンプル点(t+1点目)の決定
 		x_next = argmax_u();
-		debug_inside();
+		//debug_inside();
 		
 		//データセットの更新
 		D_q.col(t) = x_next;
@@ -39,6 +42,11 @@ int main(void)
 	}
 
 	//このときt=Tで，データセットのサイズもT．
+
+	clock_t BO_e = clock();
+	cout << "max  of BO : " << maxf << endl;
+	cout << "time of BO : " << BO_e - BO_s << endl;
+	
 	debug_last();
 
 	return 0;

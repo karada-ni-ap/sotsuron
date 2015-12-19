@@ -1,5 +1,6 @@
 #include <iostream>
 #include <Eigen/Dense>
+#include <time.h>
 #include "const.h"
 #include "BO.h"
 #include "myfunc.h"
@@ -45,25 +46,46 @@ void debug_inside(){ //tはデータセットのサイズ
 }
 
 void debug_last(){
-	cout << "maxf  is " << maxf << endl;
+	//cout << "maxf of BO is " << maxf << endl;
+
 	//cout << "relax is " << relaxation(Ux0, Lx0, Uy0, Ly0) << endl;
 	//cout << "local is " << local_opt(Ux0, Lx0, Uy0, Ly0) << endl;
 
-	classQ Q0;
 
+	clock_t BC_s = clock();
+	cout << "max  of BC : " << branch_and_cut() << endl;
+	clock_t BC_e = clock();
+	cout << "time of BC : " << BC_e - BC_s << endl;
+
+
+	classQ Q0;
 	Q0.makeQ(Ux0, Lx0, Uy0, Ly0);
+
+	//cout << "makeQ test : " << Q0.Q_U << endl;
+
+	Qlist List;
+	List.add(Q0);
+
+	classQ Qtmp = List.extract();
+
+	//cout << "extract    : " << Qtmp.Q_U << endl;
+
+	/*
 	pair<classQ, classQ> devided = Q0.devide();
 
 	classQ Q1 = devided.first;
 	classQ Q2 = devided.second;
 
-	Q1.next = &Q2;
-	cout << Q1.next->Ux << endl;
+	List.add(Q1);
+	List.add(Q2);
 
-	cout << devided.first.Lx.transpose() << endl;
-	cout << devided.second.Ux.transpose() << endl;
-	
+	cout << List.root.next->Q_U << endl;
+	cout << List.root.next->next->Q_U << endl;
 
+	List.delete_tail(6.51);
+
+	cout << List.root.next->next->Q_U << endl;
+	*/
 
 	for (int z = 0; z < 100; z++){
 			//VectorXd x = VectorXd::Random(d);

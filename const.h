@@ -53,5 +53,8 @@ extern const int    ite_relax; //緩和問題の反復回数
 extern const double Alp_relax; //緩和問題の初期ステップサイズ
 extern const double eps_relax; //緩和問題のε
 
+extern const int    ite_bc;	//分枝限定法の反復回数
+extern const double eps_bc; //分枝限定法のε
+
 extern const int select;		// 目的関数の切り替え
 extern const bool bfgs_or_rand;	// argmaxの切り替え（BFGS⇔ランダム）

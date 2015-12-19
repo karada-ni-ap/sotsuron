@@ -19,8 +19,10 @@ void classQ::makeQ(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
 }
 
 pair<classQ, classQ> classQ::devide(){
-	classQ Q1;
-	classQ Q2;
+	pair<classQ, classQ> Pair;
+
+	//classQ Q1;
+	//classQ Q2;
 
 	int longest_x = 0;
 	int longest_y = 0;
@@ -50,16 +52,122 @@ pair<classQ, classQ> classQ::devide(){
 	max_x /= 2.0;
 	max_y /= 2.0;
 
-	Q1.makeQ(Ux, Lx + max_x*ex, Uy, Ly + max_y*ey);
-	Q2.makeQ(Ux - max_x*ex, Lx, Uy - max_y*ey, Ly);
+	Pair.first .makeQ(Ux, Lx + max_x*ex, Uy, Ly + max_y*ey);
+	Pair.second.makeQ(Ux - max_x*ex, Lx, Uy - max_y*ey, Ly);
 
-	return make_pair(Q1, Q2);
+	return Pair;
 }
 
 void classQ::calculate_lo(){
 	Q_L = local_opt(Ux, Lx, Uy, Ly);
 }
 
+void Qlist::add(classQ Q){
+	classQ *Qins;
+	Qins = new classQ();
+
+	Qins->Ux = Q.Ux;
+	Qins->Lx = Q.Lx;
+	Qins->Uy = Q.Uy;
+	Qins->Ly = Q.Ly;
+	Qins->Q_U = Q.Q_U;
+
+	classQ* Qtmp = root.next;
+	classQ* Qprev = &root;
+
+	while (Qtmp != &root){
+		if (Qins->Q_U > Qtmp->Q_U){
+			break;
+		}
+
+		Qprev = Qtmp;
+		Qtmp = Qtmp->next;
+	}
+
+	Qprev->next = Qins;
+	Qins->prev = Qprev;
+
+	Qtmp->prev = Qins;
+	Qins->next = Qtmp;
+}
+
+classQ Qlist::extract(){
+	classQ* Q;
+	Q = new classQ();
+
+	classQ* Qret = root.next;
+
+	Qret->next->prev = &root;		//エラー
+	root.next = Qret->next;			//エラー
+
+	Q->Ux = Qret->Ux;
+	Q->Lx = Qret->Lx;
+	Q->Uy = Qret->Uy;
+	Q->Ly = Qret->Ly;
+	
+	Q->Q_U = Qret->Q_U;
+	Q->Q_L = Qret->Q_L;
+
+	delete Qret;
+	return *Q;
+}
+
+void Qlist::delete_tail(double L){
+	classQ* Qtmp;
+
+	while (true){
+		Qtmp = root.prev;
+
+		if (Qtmp == &root || Qtmp->Q_U > L)
+			break;
+
+		else{
+			Qtmp->prev->next = Qtmp->next;
+			Qtmp->next->prev = Qtmp->prev;
+			delete Qtmp;
+		}
+	}
+}
+
 double branch_and_cut(){
-	return 0;
+	classQ Q0;
+	classQ Q, Q1, Q2;
+	pair<classQ, classQ> Pair;
+	
+	Q0.makeQ(Ux0, Lx0, Uy0, Ly0);
+	Q0.calculate_lo();
+
+	double maxU = Q0.Q_U;
+	double maxL = Q0.Q_L;
+
+	Qlist List;
+	List.add(Q0);
+
+	for (int k = 0; k < 1; k++){
+		Q = List.extract();
+		Pair = Q.devide();
+
+		Q1 = Pair.first;
+		Q2 = Pair.second;
+
+		if (Q1.Q_U > maxL){
+			Q1.calculate_lo();
+			maxL = Q1.Q_L > maxL ? Q1.Q_L : maxL;
+			List.add(Q1);
+		}
+		if (Q2.Q_U > maxL){
+			Q2.calculate_lo();
+			maxL = Q2.Q_L > maxL ? Q2.Q_L : maxL;
+			List.add(Q2);
+		}
+
+		List.delete_tail(maxL);
+
+		maxU = List.root.next->Q_U;
+
+		if (maxU - maxL < eps_bc)
+			break;
+	}
+
+	return maxL;
 }
