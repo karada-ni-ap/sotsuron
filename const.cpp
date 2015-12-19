@@ -10,13 +10,10 @@ extern const int d=2;
 extern const int m=4;
 extern const int n=3;
 
-extern const VectorXd Ux = 2.0	*VectorXd::Constant(d, 1.0);
-extern const VectorXd Lx = -2.0	*VectorXd::Constant(d, 1.0);
-extern const VectorXd Uy = 2.0	*VectorXd::Constant(m, 1.0);
-extern const VectorXd Ly = -2.0	*VectorXd::Constant(m, 1.0);
-
-extern const double Ub = 5.0;
-extern const double Lb = -5.0;
+extern const VectorXd Ux0 = 2.0	*VectorXd::Constant(d, 1.0);
+extern const VectorXd Lx0 = -2.0*VectorXd::Constant(d, 1.0);
+extern const VectorXd Uy0 = 2.0	*VectorXd::Constant(m, 1.0);
+extern const VectorXd Ly0 = -2.0*VectorXd::Constant(m, 1.0);
 
 extern const double Alp0 = 0.3;
 extern const double rho = 0.8;

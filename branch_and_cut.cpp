@@ -10,10 +10,10 @@ using namespace std;
 using namespace Eigen;
 
 void classQ::makeQ(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
-	Q_Ux = ux;
-	Q_Lx = lx;
-	Q_Uy = uy;
-	Q_Ly = ly;
+	Ux = ux;
+	Lx = lx;
+	Uy = uy;
+	Ly = ly;
 
 	Q_U = relaxation(ux, lx, uy, ly);
 }
@@ -28,15 +28,15 @@ pair<classQ, classQ> classQ::devide(){
 	double max_y = -1;
 
 	for (int i = 0; i < d; i++){
-		if (Q_Ux(i) - Q_Lx(i) > max_x){
-			max_x = Q_Ux(i) - Q_Lx(i);
+		if (Ux(i) - Lx(i) > max_x){
+			max_x = Ux(i) - Lx(i);
 			longest_x = i;
 		}
 	}
 
 	for (int j = 0; j < m; j++){
-		if (Q_Uy(j) - Q_Ly(j) > max_y){
-			max_y = Q_Uy(j) - Q_Ly(j);
+		if (Uy(j) - Ly(j) > max_y){
+			max_y = Uy(j) - Ly(j);
 			longest_y = j;
 		}
 	}
@@ -50,14 +50,14 @@ pair<classQ, classQ> classQ::devide(){
 	max_x /= 2.0;
 	max_y /= 2.0;
 
-	Q1.makeQ(Q_Ux, Q_Lx + max_x*ex, Q_Uy, Q_Ly + max_y*ey);
-	Q2.makeQ(Q_Ux - max_x*ex, Q_Lx, Q_Uy - max_y*ey, Q_Ly);
+	Q1.makeQ(Ux, Lx + max_x*ex, Uy, Ly + max_y*ey);
+	Q2.makeQ(Ux - max_x*ex, Lx, Uy - max_y*ey, Ly);
 
 	return make_pair(Q1, Q2);
 }
 
 void classQ::calculate_lo(){
-	Q_L = local_opt(Q_Ux, Q_Lx, Q_Uy, Q_Ly);
+	Q_L = local_opt(Ux, Lx, Uy, Ly);
 }
 
 double branch_and_cut(){

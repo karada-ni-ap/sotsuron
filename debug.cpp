@@ -46,23 +46,22 @@ void debug_inside(){ //tはデータセットのサイズ
 
 void debug_last(){
 	cout << "maxf  is " << maxf << endl;
-	//cout << "relax is " << relaxation(Ux, Lx, Uy, Ly) << endl;
-	//cout << "local is " << local_opt(Ux, Lx, Uy, Ly) << endl;
+	//cout << "relax is " << relaxation(Ux0, Lx0, Uy0, Ly0) << endl;
+	//cout << "local is " << local_opt(Ux0, Lx0, Uy0, Ly0) << endl;
 
 	classQ Q0;
 
-	Q0.makeQ(Ux, Lx, Uy, Ly);
+	Q0.makeQ(Ux0, Lx0, Uy0, Ly0);
 	pair<classQ, classQ> devided = Q0.devide();
 
 	classQ Q1 = devided.first;
 	classQ Q2 = devided.second;
 
 	Q1.next = &Q2;
-	cout << Q1.next->Q_Ux << endl;
+	cout << Q1.next->Ux << endl;
 
-
-	//cout << devided.first.Q_Ux.transpose() << endl;
-	//cout << devided.second.Q_Ly.transpose() << endl;
+	cout << devided.first.Lx.transpose() << endl;
+	cout << devided.second.Ux.transpose() << endl;
 	
 
 

@@ -10,13 +10,10 @@ extern const int d; // xの次元
 extern const int m; // yの次元
 extern const int n; // 対称行列のサイズ
 
-extern const VectorXd Ux;
-extern const VectorXd Lx;
-extern const VectorXd Uy;
-extern const VectorXd Ly;
-
-extern const double Ub;  // 超立方体の上界
-extern const double Lb;  // 超立方体の下界
+extern const VectorXd Ux0;
+extern const VectorXd Lx0;
+extern const VectorXd Uy0;
+extern const VectorXd Ly0;
 
 extern const double Alp0;		 // バックトップ法のαの初期値
 extern const double rho;		 // バックトラック法のρ

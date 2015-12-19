@@ -8,9 +8,9 @@
 using namespace std;
 using namespace Eigen;
 
-double local_opt(VectorXd Ux0, VectorXd Lx0, VectorXd Uy0, VectorXd Ly0){
-	VectorXd x = (Ux0 + Lx0) / 2;
-	VectorXd y = (Uy0 + Ly0) / 2;
+double local_opt(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
+	VectorXd x = (ux + lx) / 2;
+	VectorXd y = (uy + ly) / 2;
 
 	pair<double, VectorXd> X;
 	pair<double, VectorXd> Y;
@@ -22,10 +22,10 @@ double local_opt(VectorXd Ux0, VectorXd Lx0, VectorXd Uy0, VectorXd Ly0){
 	double Alp = Alp_local;
 	
 	for (int k = 0; k < ite_local; k++){
-		X = sev_y(y, x, Ux0, Lx0, Alp);
+		X = sev_y(y, x, ux, lx, Alp);
 		x = X.second;
 
-		Y = sev_x(x, y, Uy0, Ly0, Alp);
+		Y = sev_x(x, y, uy, ly, Alp);
 		y = Y.second;
 		
 		tmp = Y.first;
@@ -40,9 +40,9 @@ double local_opt(VectorXd Ux0, VectorXd Lx0, VectorXd Uy0, VectorXd Ly0){
 	return max;
 }
 
-double relaxation(VectorXd Ux0, VectorXd Lx0, VectorXd Uy0, VectorXd Ly0){
-	VectorXd x = (Ux0 + Lx0) / 2;
-	VectorXd y = (Uy0 + Ly0) / 2;
+double relaxation(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
+	VectorXd x = (ux + lx) / 2;
+	VectorXd y = (uy + ly) / 2;
 	MatrixXd W = MatrixXd::Zero(d, m);
 
 	VectorXd dx = VectorXd::Zero(d);
@@ -61,8 +61,8 @@ double relaxation(VectorXd Ux0, VectorXd Lx0, VectorXd Uy0, VectorXd Ly0){
 
 	for (int k = 0; k < ite_relax; k++){
 		//x,y,W‚ÌXV
-		x = projection(x + Alp*dx, Ux0, Lx0);
-		y = projection(y + Alp*dy, Uy0, Ly0);
+		x = projection(x + Alp*dx, ux, lx);
+		y = projection(y + Alp*dy, uy, ly);
 		W += Alp*dW;
 
 		//Axy‚Ì\¬

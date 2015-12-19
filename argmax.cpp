@@ -86,7 +86,7 @@ VectorXd bfgs(VectorXd x0){
 
 		Xold = Xnew;
 		Xnew = Xold + Alp*dir;
-		Xnew = projection(Xnew, Ux, Lx);
+		Xnew = projection(Xnew, Ux0, Lx0);
 
 		Gold = Gnew;
 		Gnew = u_over_x(Xnew);

@@ -10,10 +10,10 @@ using namespace Eigen;
 
 class classQ{
 public:
-	VectorXd Q_Ux;
-	VectorXd Q_Lx;
-	VectorXd Q_Uy;
-	VectorXd Q_Ly;
+	VectorXd Ux;
+	VectorXd Lx;
+	VectorXd Uy;
+	VectorXd Ly;
 
 	double Q_U;
 	double Q_L;

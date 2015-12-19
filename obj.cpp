@@ -12,7 +12,7 @@ double obj(VectorXd x, int select){
 	switch (select)
 	{
 	case 0:
-		return sev_x(x, VectorXd::Zero(m), Uy, Ly, Alp_subgrad).first;
+		return sev_x(x, VectorXd::Zero(m), Uy0, Ly0, Alp_subgrad).first;
 
 	case 1:
 		return -sqrt(x.squaredNorm());

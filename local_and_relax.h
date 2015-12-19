@@ -7,5 +7,5 @@
 using namespace std;
 using namespace Eigen;
 
-double local_opt(VectorXd Ux0, VectorXd Lx0, VectorXd Uy0, VectorXd Ly0);
-double relaxation(VectorXd Ux0, VectorXd Lx0, VectorXd Uy0, VectorXd Ly0);
+double local_opt(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly);
+double relaxation(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly);

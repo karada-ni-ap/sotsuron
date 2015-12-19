@@ -23,9 +23,7 @@ VectorXd bound_rand(int num){
 	VectorXd v	  = VectorXd::Zero(d);
 
 	for (int i = 0; i < d; i++){
-		v(i) = (Ux(i) - Lx(i)) * (rand(i) / 2) + (Ux(i) + Lx(i)) / 2;
+		v(i) = (Ux0(i) - Lx0(i)) * (rand(i) / 2) + (Ux0(i) + Lx0(i)) / 2;
 	}
 	return v;
-
-	//return VectorXd::Constant(num, (Ub + Lb) / 2) + ((Ub - Lb)/2)* VectorXd::Random(num);
 }
