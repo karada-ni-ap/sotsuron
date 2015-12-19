@@ -4,7 +4,7 @@ using namespace Eigen;
 extern const int Inf = 10000;
 
 extern		 int t=0;
-extern const int T=40;
+extern const int T=4;
 
 extern const int d=2;
 extern const int m=4;

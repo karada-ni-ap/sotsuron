@@ -3,108 +3,63 @@
 #include <math.h>
 #include "const.h"
 #include "sev.h"
-#include "argmax.h"
+#include "local_and_relax.h"
+#include "branch_and_cut.h"
 
 using namespace std;
 using namespace Eigen;
 
-double local_opt(VectorXd Ux0, VectorXd Lx0, VectorXd Uy0, VectorXd Ly0){
-	VectorXd x = (Ux0 + Lx0) / 2;
-	VectorXd y = (Uy0 + Ly0) / 2;
+void classQ::makeQ(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
+	Q_Ux = ux;
+	Q_Lx = lx;
+	Q_Uy = uy;
+	Q_Ly = ly;
 
-	pair<double, VectorXd> X;
-	pair<double, VectorXd> Y;
-
-	double tmp = 0;
-	double max = -Inf;
-	double pre = -Inf;
-
-	double Alp = Alp_local;
-	
-	for (int k = 0; k < ite_local; k++){
-		X = sev_y(y, x, Ux0, Lx0, Alp);
-		x = X.second;
-
-		Y = sev_x(x, y, Uy0, Ly0, Alp);
-		y = Y.second;
-		
-		tmp = Y.first;
-
-		max = tmp>max ? tmp : max;
-		if (abs(tmp - pre) < eps_local)	//ほんとはよくない
-			break;
-
-		Alp = Alp_local / sqrt(k + 1);
-	}
-
-	return max;
+	Q_U = relaxation(ux, lx, uy, ly);
 }
 
-double relaxation(VectorXd Ux0, VectorXd Lx0, VectorXd Uy0, VectorXd Ly0){
-	VectorXd x = (Ux0 + Lx0) / 2;
-	VectorXd y = (Uy0 + Ly0) / 2;
-	MatrixXd W = MatrixXd::Zero(d, m);
+pair<classQ, classQ> classQ::devide(){
+	classQ Q1;
+	classQ Q2;
 
-	VectorXd dx = VectorXd::Zero(d);
-	VectorXd dy = VectorXd::Zero(m);
-	MatrixXd dW = MatrixXd::Zero(d, m);
-	
-	MatrixXd Axy = MatrixXd::Zero(n, n);
+	int longest_x = 0;
+	int longest_y = 0;
+	double max_x = -1;
+	double max_y = -1;
 
-	VectorXd pn = VectorXd::Zero(n);
-
-	double min = 0;
-	double pre = -Inf;
-	double opt = -Inf;
-
-	double Alp = Alp_relax;
-
-	for (int k = 0; k < ite_relax; k++){
-		//x,y,Wの更新
-		x = projection(x + Alp*dx, Ux0, Lx0);
-		y = projection(y + Alp*dy, Uy0, Ly0);
-		W += Alp*dW;
-
-		//Axyの構成
-		Axy = A[0][0];
-
-		for (int i = 1; i <= d; i++){
-			Axy += x(i - 1)*A[i][0];
+	for (int i = 0; i < d; i++){
+		if (Q_Ux(i) - Q_Lx(i) > max_x){
+			max_x = Q_Ux(i) - Q_Lx(i);
+			longest_x = i;
 		}
-		for (int j = 1; j <= m; j++){
-			Axy += y(j - 1)*A[0][j];
-			for (int i = 1; i <= d; i++){
-				Axy += W(i - 1, j - 1)*A[i][j];
-			}
-		}
-
-		SelfAdjointEigenSolver<MatrixXd> es(Axy);
-		pn = es.eigenvectors().col(0);	//Axyの最小固有ベクトル
-		min = es.eigenvalues()(0);		//Axyの最小固有値
-		opt = min > opt ? min : opt;
-
-		//上昇方向
-		for (int i = 1; i <= d; i++){
-			dx(i-1) = half_ip(A[i][0],pn);
-		}
-		for (int j = 1; j <= m; j++){
-			dy(j - 1) = half_ip(A[0][j],pn);
-			for (int i = 1; i <= d; i++){
-				dW(i-1,j-1)= half_ip(A[i][j],pn);
-			}
-		}
-		
-		//収束判定
-		if (dx.norm() < eps_relax
-			|| dy.norm() < eps_relax
-			|| dW.norm() < eps_relax
-			|| abs(pre - min) < eps_relax		//ほんとは良くない
-			)
-			break;
-
-		Alp = Alp_relax / sqrt(k + 1);	//ステップサイズの更新
-		pre = min;
 	}
 
-	return opt;
+	for (int j = 0; j < m; j++){
+		if (Q_Uy(j) - Q_Ly(j) > max_y){
+			max_y = Q_Uy(j) - Q_Ly(j);
+			longest_y = j;
+		}
+	}
+
+	VectorXd ex = VectorXd::Zero(d);
+	VectorXd ey = VectorXd::Zero(m);
+
+	ex(longest_x) = 1;
+	ey(longest_y) = 1;
+
+	max_x /= 2.0;
+	max_y /= 2.0;
+
+	Q1.makeQ(Q_Ux, Q_Lx + max_x*ex, Q_Uy, Q_Ly + max_y*ey);
+	Q2.makeQ(Q_Ux - max_x*ex, Q_Lx, Q_Uy - max_y*ey, Q_Ly);
+
+	return make_pair(Q1, Q2);
+}
+
+void classQ::calculate_lo(){
+	Q_L = local_opt(Q_Ux, Q_Lx, Q_Uy, Q_Ly);
+}
+
+double branch_and_cut(){
+	return 0;
 }

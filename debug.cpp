@@ -5,6 +5,7 @@
 #include "myfunc.h"
 #include "obj.h"
 #include "argmax.h"
+#include "local_and_relax.h"
 #include "branch_and_cut.h"
 
 using namespace std;
@@ -45,8 +46,24 @@ void debug_inside(){ //tはデータセットのサイズ
 
 void debug_last(){
 	cout << "maxf  is " << maxf << endl;
-	cout << "relax is " << relaxation(Ux, Lx, Uy, Ly) << endl;
-	cout << "local is " << local_opt(Ux, Lx, Uy, Ly) << endl;
+	//cout << "relax is " << relaxation(Ux, Lx, Uy, Ly) << endl;
+	//cout << "local is " << local_opt(Ux, Lx, Uy, Ly) << endl;
+
+	classQ Q0;
+
+	Q0.makeQ(Ux, Lx, Uy, Ly);
+	pair<classQ, classQ> devided = Q0.devide();
+
+	classQ Q1 = devided.first;
+	classQ Q2 = devided.second;
+
+	Q1.next = &Q2;
+	cout << Q1.next->Q_Ux << endl;
+
+
+	//cout << devided.first.Q_Ux.transpose() << endl;
+	//cout << devided.second.Q_Ly.transpose() << endl;
+	
 
 
 	for (int z = 0; z < 100; z++){
