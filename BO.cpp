@@ -1,8 +1,11 @@
 #include <iostream>
 #include <Eigen/Dense>
+#include <time.h>
 #include "const.h"
 #include "myfunc.h"
 #include "obj.h"
+#include "argmax.h"
+#include "debug.h"
 
 using namespace std;
 using namespace Eigen;
@@ -111,4 +114,32 @@ MatrixXd k_over_x(VectorXd x){
 
 VectorXd u_over_x(VectorXd x){
 	return k_over_x(x)*u_over_k(x);
+}
+
+double BO(){
+	VectorXd x_next = VectorXd::Zero(d);
+	VectorXd x_opt  = VectorXd::Zero(d);
+
+	for (t = 0; t < T; t++){
+		//【tはこの時点におけるデータセットのサイズ】//
+
+		x_next = argmax_u();
+		debug_inside(x_next, x_opt);
+
+		//データセットの更新
+		D_q.col(t) = x_next;
+		f(t) = obj(x_next, select);
+
+		if (f(t)>maxf){
+			t_find = t;
+			maxf = f(t);
+			x_opt = x_next;
+		}
+		//【この時点でデータセットのサイズはt+1】//
+
+		update_K(x_next);
+		//【update_Kが行われた後，Kのサイズはt+1】//
+	}
+
+	return maxf;
 }

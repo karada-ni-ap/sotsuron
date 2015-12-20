@@ -13,3 +13,4 @@ double u(Eigen::VectorXd x);
 VectorXd u_over_k(VectorXd x);
 MatrixXd k_over_x(VectorXd x);
 VectorXd u_over_x(VectorXd x);
+double BO();

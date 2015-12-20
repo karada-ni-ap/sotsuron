@@ -16,25 +16,24 @@ double local_opt(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
 	pair<double, VectorXd> Y;
 
 	double tmp = 0;
+	double pre = 0;
 	double max = -Inf;
-	double pre = -Inf;
-
-	double Alp = Alp_local;
 	
 	for (int k = 0; k < ite_local; k++){
-		X = sev_y(y, x, ux, lx, Alp);
+		X = sev_y(y, x, ux, lx);
 		x = X.second;
 
-		Y = sev_x(x, y, uy, ly, Alp);
+		Y = sev_x(x, y, uy, ly);
 		y = Y.second;
 		
+		pre = tmp;
 		tmp = Y.first;
 
 		max = tmp>max ? tmp : max;
-		if (abs(tmp - pre) < eps_local)	//ほんとはよくない
-			break;
 
-		Alp = Alp_local / sqrt(k + 1);
+		//収束判定
+		if (abs(tmp - pre) < eps_local)
+			break;
 	}
 
 	return max;
@@ -43,28 +42,31 @@ double local_opt(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
 double relaxation(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
 	VectorXd x = (ux + lx) / 2;
 	VectorXd y = (uy + ly) / 2;
-	MatrixXd W = MatrixXd::Zero(d, m);
+	MatrixXd W = x*y.transpose();
 
 	VectorXd dx = VectorXd::Zero(d);
 	VectorXd dy = VectorXd::Zero(m);
 	MatrixXd dW = MatrixXd::Zero(d, m);
+
+	VectorXd px = VectorXd::Zero(d);
+	VectorXd py = VectorXd::Zero(m);
+	MatrixXd pW = MatrixXd::Zero(d, m);
 	
 	MatrixXd Axy = MatrixXd::Zero(n, n);
-
-	VectorXd pn = VectorXd::Zero(n);
+	VectorXd pn  = VectorXd::Zero(n);
 
 	double min = 0;
-	double pre = -Inf;
 	double opt = -Inf;
 
-	double Alp = Alp_relax;
+	double alpx0 = (ux - lx).norm() / beta;
+	double alpx  = alpx0;
+
+	double alpy0 = (uy - ly).norm() / beta;
+	double alpy  = alpy0;
+
+	double alpW  = alpW0;
 
 	for (int k = 0; k < ite_relax; k++){
-		//x,y,Wの更新
-		x = projection(x + Alp*dx, ux, lx);
-		y = projection(y + Alp*dy, uy, ly);
-		W += Alp*dW;
-
 		//Axyの構成
 		Axy = A[0][0];
 
@@ -93,17 +95,28 @@ double relaxation(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
 				dW(i-1,j-1)= half_ip(A[i][j],pn);
 			}
 		}
+
+		//x,y,Wの更新
+		px = x;
+		py = y;
+		pW = W;
+
+		x = projection(x + alpx*dx, ux, lx);
+		y = projection(y + alpy*dy, uy, ly);
+		W = W + alpW*dW;
 		
+
 		//収束判定
-		if (dx.norm() < eps_relax
-			|| dy.norm() < eps_relax
-			|| dW.norm() < eps_relax
-			|| abs(pre - min) < eps_relax		//ほんとは良くない
-			)
+		if (dx.norm() < eps_relax && dy.norm() < eps_relax)
 			break;
 
-		Alp = Alp_relax / sqrt(k + 1);	//ステップサイズの更新
-		pre = min;
+		if ((px - x).norm() < eps_relax && (py - y).norm() < eps_relax) //ここで毎回脱出している
+			break;
+
+		alpx = alpx0 / sqrt(k + 1);
+		alpy = alpy0 / sqrt(k + 1);
+		alpW = alpW0 / sqrt(k + 1);
+
 	}
 
 	return opt;

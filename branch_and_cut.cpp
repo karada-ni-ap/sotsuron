@@ -21,9 +21,6 @@ void classQ::makeQ(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
 pair<classQ, classQ> classQ::devide(){
 	pair<classQ, classQ> Pair;
 
-	//classQ Q1;
-	//classQ Q2;
-
 	int longest_x = 0;
 	int longest_y = 0;
 	double max_x = -1;
@@ -62,6 +59,7 @@ void classQ::calculate_lo(){
 	Q_L = local_opt(Ux, Lx, Uy, Ly);
 }
 
+//問題なし
 void Qlist::add(classQ Q){
 	classQ *Qins;
 	Qins = new classQ();
@@ -97,8 +95,8 @@ classQ Qlist::extract(){
 
 	classQ* Qret = root.next;
 
-	Qret->next->prev = &root;		//エラー
-	root.next = Qret->next;			//エラー
+	Qret->next->prev = &root;
+	root.next = Qret->next;
 
 	Q->Ux = Qret->Ux;
 	Q->Lx = Qret->Lx;
@@ -143,7 +141,7 @@ double branch_and_cut(){
 	Qlist List;
 	List.add(Q0);
 
-	for (int k = 0; k < 1; k++){
+	for (int k = 0; k < ite_bc; k++){
 		Q = List.extract();
 		Pair = Q.devide();
 
@@ -152,11 +150,13 @@ double branch_and_cut(){
 
 		if (Q1.Q_U > maxL){
 			Q1.calculate_lo();
+			//cout << Q1.Q_L << endl;
 			maxL = Q1.Q_L > maxL ? Q1.Q_L : maxL;
 			List.add(Q1);
 		}
 		if (Q2.Q_U > maxL){
 			Q2.calculate_lo();
+			//cout << Q2.Q_L << endl;
 			maxL = Q2.Q_L > maxL ? Q2.Q_L : maxL;
 			List.add(Q2);
 		}
@@ -164,6 +164,12 @@ double branch_and_cut(){
 		List.delete_tail(maxL);
 
 		maxU = List.root.next->Q_U;
+
+		//Debug
+		cout << "k is " << k << endl;
+		cout << "maxU " << maxU << endl;
+		cout << "maxL " << maxL << endl;
+		cout << "--------------------------------" << endl;
 
 		if (maxU - maxL < eps_bc)
 			break;
