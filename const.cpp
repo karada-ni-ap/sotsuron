@@ -5,11 +5,11 @@ extern const int Inf = 100000;
 
 extern		 int t=0;
 extern       int t_find=0;
-extern const int T=50;
+extern const int T=10;
 
-extern const int d=3;
-extern const int m=5;
-extern const int n=8;
+extern const int d=2;
+extern const int m=2;
+extern const int n=3;
 
 extern const VectorXd Ux0 = 3.0		*VectorXd::Constant(d, 1.0);
 extern const VectorXd Lx0 = -3.0	*VectorXd::Constant(d, 1.0);
@@ -39,19 +39,19 @@ extern MatrixXd** A = new MatrixXd*[d + 1];
 extern MatrixXd*  B = new MatrixXd [m + 1];
 extern MatrixXd*  C = new MatrixXd [d + 1];
 
-extern const double beta = 2.0;
+extern const double beta = 3.0;
 
 extern const int    ite_sev = 200;
 extern const double eps_sev = 1.0e-6;
 
-extern const int    ite_local = 60;
+extern const int    ite_local = 40;
 extern const double eps_local = 1.0e-6;
 
 extern const int    ite_relax = 100;
 extern const double eps_relax = 1.0e-6;
 extern const double alpW0 = 1.0;
 
-extern const int    ite_bc = 50;
+extern const int    ite_bc = 300;
 extern const double eps_bc = 1.0e-4;
 
 extern const int  select = 0;			// select = 0‚Ì‚Æ‚«sev‚Ì’l‚ð•Ô‚·

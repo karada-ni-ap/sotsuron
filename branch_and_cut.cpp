@@ -129,11 +129,15 @@ void Qlist::delete_tail(double L){
 
 double branch_and_cut(){
 	classQ Q0;
-	classQ Q, Q1, Q2;
+	classQ Q, Qopt;
+	classQ Q12[2];
+
 	pair<classQ, classQ> Pair;
 	
 	Q0.makeQ(Ux0, Lx0, Uy0, Ly0);
 	Q0.calculate_lo();
+
+	Qopt = Q0;
 
 	double maxU = Q0.Q_U;
 	double maxL = Q0.Q_L;
@@ -142,23 +146,27 @@ double branch_and_cut(){
 	List.add(Q0);
 
 	for (int k = 0; k < ite_bc; k++){
+		cout << "k is " << k << endl;
+
 		Q = List.extract();
 		Pair = Q.devide();
 
-		Q1 = Pair.first;
-		Q2 = Pair.second;
+		Q12[0] = Pair.first;
+		Q12[1] = Pair.second;
 
-		if (Q1.Q_U > maxL){
-			Q1.calculate_lo();
-			//cout << Q1.Q_L << endl;
-			maxL = Q1.Q_L > maxL ? Q1.Q_L : maxL;
-			List.add(Q1);
-		}
-		if (Q2.Q_U > maxL){
-			Q2.calculate_lo();
-			//cout << Q2.Q_L << endl;
-			maxL = Q2.Q_L > maxL ? Q2.Q_L : maxL;
-			List.add(Q2);
+		for (int i = 0; i < 2; i++){
+			if (Q12[i].Q_U > maxL){
+				Q12[i].calculate_lo();
+				List.add(Q12[i]);
+
+				//cout << "Q" << i+1 << " : " << Q12[i].Q_L << endl;
+
+				if (Q12[i].Q_L > maxL){
+					maxL = Q12[i].Q_L;
+					Qopt = Q12[i];
+					cout << "maxL is updated." << endl;
+				}
+			}
 		}
 
 		List.delete_tail(maxL);
@@ -166,9 +174,8 @@ double branch_and_cut(){
 		maxU = List.root.next->Q_U;
 
 		//Debug
-		cout << "k is " << k << endl;
 		cout << "maxU " << maxU << endl;
-		cout << "maxL " << maxL << endl;
+		//cout << "maxL " << maxL << endl;
 		cout << "--------------------------------" << endl;
 
 		if (maxU - maxL < eps_bc)
