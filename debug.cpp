@@ -20,5 +20,8 @@ void debug_inside(VectorXd x_next, VectorXd x_opt){ //tはデータセットのサイズ
 }
 
 void debug_last(){
-	;
+	VectorXd x0 = VectorXd::Zero(d);
+	VectorXd y0 = VectorXd::Zero(m);
+
+	branch_and_cut();
 }

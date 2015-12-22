@@ -25,7 +25,7 @@ double local_opt(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
 
 		Y = sev_x(x, y, uy, ly);
 		y = Y.second;
-		
+
 		pre = tmp;
 		tmp = Y.first;
 
@@ -87,12 +87,12 @@ double relaxation(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
 
 		//è„è∏ï˚å¸
 		for (int i = 1; i <= d; i++){
-			dx(i-1) = half_ip(A[i][0],pn);
+			dx(i-1) = pn.transpose() * A[i][0] * pn;
 		}
 		for (int j = 1; j <= m; j++){
-			dy(j - 1) = half_ip(A[0][j],pn);
+			dy(j - 1) = pn.transpose() * A[0][j] * pn;
 			for (int i = 1; i <= d; i++){
-				dW(i-1,j-1)= half_ip(A[i][j],pn);
+				dW(i-1,j-1)= pn.transpose() * A[i][j] * pn;
 			}
 		}
 

@@ -38,11 +38,13 @@ public:
 	Qlist(){
 		root.next = &root;
 		root.prev = &root;
+		root.Q_L  = -Inf;
 	}
 
 	void add(classQ Q);
 	classQ extract();
 	void delete_tail(double L);
+	double maxL();
 };
 
 double branch_and_cut();

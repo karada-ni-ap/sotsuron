@@ -59,7 +59,6 @@ void classQ::calculate_lo(){
 	Q_L = local_opt(Ux, Lx, Uy, Ly);
 }
 
-//–â‘è‚È‚µ
 void Qlist::add(classQ Q){
 	classQ *Qins;
 	Qins = new classQ();
@@ -68,7 +67,9 @@ void Qlist::add(classQ Q){
 	Qins->Lx = Q.Lx;
 	Qins->Uy = Q.Uy;
 	Qins->Ly = Q.Ly;
+
 	Qins->Q_U = Q.Q_U;
+	Qins->Q_L = Q.Q_L;
 
 	classQ* Qtmp = root.next;
 	classQ* Qprev = &root;
@@ -127,6 +128,21 @@ void Qlist::delete_tail(double L){
 	}
 }
 
+double Qlist::maxL(){
+	double max = -Inf;
+	classQ* Qtmp = root.next;
+
+	while (Qtmp != &root){
+		cout << Qtmp->Q_L << endl; //Debug
+		if (Qtmp->Q_L > max){
+			max = Qtmp->Q_L;
+		}
+		Qtmp = Qtmp->next;
+	}
+
+	return max;
+}
+
 double branch_and_cut(){
 	classQ Q0;
 	classQ Q, Qopt;
@@ -141,6 +157,7 @@ double branch_and_cut(){
 
 	double maxU = Q0.Q_U;
 	double maxL = Q0.Q_L;
+	double optL = Q0.Q_L;
 
 	Qlist List;
 	List.add(Q0);
@@ -159,23 +176,24 @@ double branch_and_cut(){
 				Q12[i].calculate_lo();
 				List.add(Q12[i]);
 
-				//cout << "Q" << i+1 << " : " << Q12[i].Q_L << endl;
+				cout << "Q" << i+1 << " : " << Q12[i].Q_L << endl;
 
-				if (Q12[i].Q_L > maxL){
-					maxL = Q12[i].Q_L;
+				if (Q12[i].Q_L > optL){
+					optL = Q12[i].Q_L;
 					Qopt = Q12[i];
-					cout << "maxL is updated." << endl;
+					cout << "optL is updated." << endl;
 				}
 			}
 		}
 
 		List.delete_tail(maxL);
 
+		maxL = List.maxL();
 		maxU = List.root.next->Q_U;
 
 		//Debug
-		cout << "maxU " << maxU << endl;
-		//cout << "maxL " << maxL << endl;
+		//cout << "maxU " << maxU << endl;
+		cout << "maxL " << maxL << endl;
 		cout << "--------------------------------" << endl;
 
 		if (maxU - maxL < eps_bc)

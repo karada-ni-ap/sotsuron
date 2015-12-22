@@ -1,6 +1,5 @@
 #include <iostream>
 #include <Eigen/Dense>
-#include <math.h>
 #include "const.h"
 #include "myfunc.h"
 #include "argmax.h"
@@ -26,18 +25,6 @@ void initA(){
 		C[i] = MatrixXd::Zero(n, n);
 }
 
-double half_ip(MatrixXd X, VectorXd p){
-	int size = p.size();
-	
-	double val = 0;
-	for (int i = 0; i < size; i++){
-		for (int j = i; j < size; j++){
-			val += X(i, j)*p(i)*p(j);
-		}
-	}
-	return val;
-}
-
 pair<double, VectorXd> sev_x(VectorXd x, VectorXd y0, VectorXd U, VectorXd L){
 	for (int j = 0; j< (m + 1); j++){
 		B[j] = A[0][j];
@@ -53,12 +40,18 @@ pair<double, VectorXd> sev_x(VectorXd x, VectorXd y0, VectorXd U, VectorXd L){
 	VectorXd y_pre = y0;
 	VectorXd dir = VectorXd::Zero(m);
 
-	double   min  = 0;
+	double min     = 0;
+	double min_pre = 0;
+
 	double   alp0 = (U - L).norm() / beta;
 	double   alp  = alp0;
 
 	//yについて劣勾配法
 	for (int k = 0; k < ite_sev; k++){
+		alp     = alp0 / (k + 1);
+		min_pre = min;
+		y_pre   = y;
+
 		//Axyの構成
 		Axy = B[0];
 		for (int j = 1; j <= m; j++)
@@ -70,18 +63,23 @@ pair<double, VectorXd> sev_x(VectorXd x, VectorXd y0, VectorXd U, VectorXd L){
 		min = es.eigenvalues()(0);		//Axyの最小固有値
 
 		for (int j = 1; j <= m; j++){
-			dir(j-1) = half_ip(B[j], pn);
+			dir(j - 1) = pn.transpose() * B[j] * pn;
 		}
 
 		//yの更新
-		y_pre = y;
 		y = projection(y + alp*dir, U, L);
 
 		//収束判定
-		if (dir.norm() < eps_sev || (y_pre - y).norm() < eps_sev)
+		if (dir.norm() < eps_sev){
+			//cout << "極値でbreak" << endl;
 			break;
+		}
 
-		alp = alp0 / sqrt(k+1);	//ステップサイズの更新
+		if ((y_pre - y).norm() < eps_sev && abs(min - min_pre) < eps_sev){
+			//cout << "境界でbreak" << endl;
+			break;
+		}
+
 	}
 
 	return make_pair(min, y_pre);
@@ -102,12 +100,18 @@ pair<double, VectorXd> sev_y(VectorXd y, VectorXd x0, VectorXd U, VectorXd L){
 	VectorXd x_pre = x0;
 	VectorXd dir = VectorXd::Zero(d);
 
-	double min  = 0;
+	double min     = 0;
+	double min_pre = 0;
+
 	double alp0 = (U - L).norm() / beta;
 	double alp  = alp0;
 
 	//xについて劣勾配法
 	for (int k = 0; k < ite_sev; k++){
+		alp = alp0 / (k + 1);
+		min_pre = min;
+		x_pre = x;
+
 		//Axyの構成
 		Axy = C[0];
 		for (int i = 1; i <= d; i++)
@@ -119,18 +123,23 @@ pair<double, VectorXd> sev_y(VectorXd y, VectorXd x0, VectorXd U, VectorXd L){
 		min = es.eigenvalues()(0);		//Axyの最小固有値
 
 		for (int i = 1; i <= d; i++){
-			dir(i - 1) = half_ip(C[i], pn);
+			dir(i - 1) = pn.transpose() * C[i] * pn;
 		}
 
 		//xの更新
-		x_pre = x;
 		x = projection(x + alp*dir, U, L);
 
 		//収束判定
-		if (dir.norm() < eps_sev || (x_pre - x).norm() < eps_sev)
+		if (dir.norm() < eps_sev){
+			//cout << "極値でbreak" << endl;
 			break;
+		}
+			
+		if ((x_pre - x).norm() < eps_sev && abs(min - min_pre) < eps_sev){
+			//cout << "境界でbreak" << endl;
+			break;
+		}
 
-		alp = alp0 / sqrt(k + 1);	//ステップサイズの更新
 	}
 
 	return make_pair(min, x_pre);
