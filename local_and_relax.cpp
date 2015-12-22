@@ -39,6 +39,57 @@ double local_opt(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
 	return max;
 }
 
+pair<MatrixXd, MatrixXd> Wbound(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
+	MatrixXd W[4];
+
+	MatrixXd Wmax = MatrixXd::Constant(d, m, -Inf);
+	MatrixXd Wmin = MatrixXd::Constant(d, m,  Inf);
+
+	W[0] = ux * uy.transpose();
+	W[1] = ux * ly.transpose();
+	W[2] = lx * uy.transpose();
+	W[3] = lx * ly.transpose();
+
+	for (int i = 0; i < d; i++){
+		for (int j = 0; j < m; j++){
+			for (int l = 0; l < 4; l++){
+				     if (W[l](i, j) > Wmax(i, j)) Wmax(i, j) = W[l](i, j);
+				else if (W[l](i, j) < Wmin(i, j)) Wmin(i, j) = W[l](i, j);
+			}
+		}
+	}
+
+	return make_pair(Wmax, Wmin);
+}
+
+double norm(VectorXd x, VectorXd y, MatrixXd W){
+	double val = 0;
+
+	for (int i = 0; i < d; i++){
+		val += x(i)*x(i);
+	}
+
+	for (int j = 0; j < m; j++){
+		val += y(j)*y(j);
+		for (int i = 0; i < d; i++){
+			val += W(i, j)*W(i, j);
+		}
+	}
+
+	return sqrt(val);
+}
+
+MatrixXd projectionW(MatrixXd W, MatrixXd Wmax, MatrixXd Wmin){
+	MatrixXd Wret = W;
+	for (int i = 0; i < d; i++){
+		for (int j = 0; j < m; j++){
+			     if (W(i, j) > Wmax(i, j)) Wret(i, j) = Wmax(i, j);
+			else if (W(i, j) < Wmin(i, j)) Wret(i, j) = Wmin(i, j);
+		}
+	}
+	return Wret;
+}
+
 double relaxation(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
 	VectorXd x = (ux + lx) / 2;
 	VectorXd y = (uy + ly) / 2;
@@ -55,18 +106,25 @@ double relaxation(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
 	MatrixXd Axy = MatrixXd::Zero(n, n);
 	VectorXd pn  = VectorXd::Zero(n);
 
+	pair<MatrixXd, MatrixXd> maxminPair = Wbound(ux, lx, uy, ly);
+
 	double min = 0;
+	double pre = 0;
 	double opt = -Inf;
 
-	double alpx0 = (ux - lx).norm() / beta;
-	double alpx  = alpx0;
-
-	double alpy0 = (uy - ly).norm() / beta;
-	double alpy  = alpy0;
-
-	double alpW  = alpW0;
+	double alp0 = norm(ux - lx, uy - ly, maxminPair.first - maxminPair.second) / beta;
+	double alp = 0;
 
 	for (int k = 0; k < ite_relax; k++){
+		//ステップサイズ
+		alp = alp0 / (k + 1);
+
+		//prev
+		pre = min;
+		px  = x;
+		py  = y;
+		pW  = W;
+
 		//Axyの構成
 		Axy = A[0][0];
 
@@ -85,6 +143,11 @@ double relaxation(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
 		min = es.eigenvalues()(0);		//Axyの最小固有値
 		opt = min > opt ? min : opt;
 
+		if (k % 100 == 0){
+			cout << k << " : " << min << endl;
+			cout << "-------------------------------" << endl;
+		}
+
 		//上昇方向
 		for (int i = 1; i <= d; i++){
 			dx(i-1) = pn.transpose() * A[i][0] * pn;
@@ -97,25 +160,22 @@ double relaxation(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
 		}
 
 		//x,y,Wの更新
-		px = x;
-		py = y;
-		pW = W;
-
-		x = projection(x + alpx*dx, ux, lx);
-		y = projection(y + alpy*dy, uy, ly);
-		W = W + alpW*dW;
-		
+		x = projection(x + alp*dx, ux, lx);
+		y = projection(y + alp*dy, uy, ly);
+		W = projectionW(W + alp*dW, maxminPair.first, maxminPair.second);	
 
 		//収束判定
-		if (dx.norm() < eps_relax && dy.norm() < eps_relax)
+		if (norm(dx, dy, dW) < eps_relax){
+			cout << "極値でbreak" << endl;
 			break;
+		}
 
-		if ((px - x).norm() < eps_relax && (py - y).norm() < eps_relax) //ここで毎回脱出している
-			break;
-
-		alpx = alpx0 / sqrt(k + 1);
-		alpy = alpy0 / sqrt(k + 1);
-		alpW = alpW0 / sqrt(k + 1);
+		else if (abs(pre - min) < eps_relax){
+			if (norm(px-x, py-y,pW-W) < eps_relax * eps_relax){
+				cout << "境界でbreak" << endl;
+				break;
+			}
+		}
 
 	}
 

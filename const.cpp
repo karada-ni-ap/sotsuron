@@ -47,9 +47,9 @@ extern const double eps_sev = 1.0e-4;
 extern const int    ite_local = 10000;
 extern const double eps_local = 1.0e-4;
 
-extern const int    ite_relax = 100;
-extern const double eps_relax = 1.0e-6;
-extern const double alpW0 = 1.0;
+extern const int    ite_relax = 100000;
+extern const double eps_relax = 1.0e-4;
+extern const double alpW0 = 0.5;
 
 extern const int    ite_bc = 10;
 extern const double eps_bc = 1.0e-4;
