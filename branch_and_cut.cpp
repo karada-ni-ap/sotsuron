@@ -60,6 +60,8 @@ void classQ::calculate_lo(){
 }
 
 void Qlist::add(classQ Q){
+	size++;
+
 	classQ *Qins;
 	Qins = new classQ();
 
@@ -91,6 +93,8 @@ void Qlist::add(classQ Q){
 }
 
 classQ Qlist::extract(){
+	size--;
+
 	classQ* Q;
 	Q = new classQ();
 
@@ -124,16 +128,17 @@ void Qlist::delete_tail(double L){
 			Qtmp->prev->next = Qtmp->next;
 			Qtmp->next->prev = Qtmp->prev;
 			delete Qtmp;
+			size--;
 		}
 	}
 }
 
 double Qlist::maxL(){
-	double max = -Inf;
+	double  max = -Inf;
 	classQ* Qtmp = root.next;
 
 	while (Qtmp != &root){
-		cout << Qtmp->Q_L << endl; //Debug
+		//cout << Qtmp->Q_U << " : " << Qtmp->Q_L << endl; //Debug
 		if (Qtmp->Q_L > max){
 			max = Qtmp->Q_L;
 		}
@@ -157,7 +162,6 @@ double branch_and_cut(){
 
 	double maxU = Q0.Q_U;
 	double maxL = Q0.Q_L;
-	double optL = Q0.Q_L;
 
 	Qlist List;
 	List.add(Q0);
@@ -165,9 +169,12 @@ double branch_and_cut(){
 	for (int k = 0; k < ite_bc; k++){
 		cout << "k is " << k << endl;
 
+		cout << "List size before extraxt : " << List.size << endl;
 		Q = List.extract();
-		Pair = Q.devide();
 
+		maxL = List.maxL();
+
+		Pair = Q.devide();
 		Q12[0] = Pair.first;
 		Q12[1] = Pair.second;
 
@@ -175,24 +182,37 @@ double branch_and_cut(){
 			if (Q12[i].Q_U > maxL){
 				Q12[i].calculate_lo();
 				List.add(Q12[i]);
+				cout << "Q" << i + 1 << " : " << Q12[i].Q_U << " > " << Q12[i].Q_L << endl;
 
-				cout << "Q" << i+1 << " : " << Q12[i].Q_L << endl;
+				cout << Q12[i].Ux.transpose() << endl;
+				cout << Q12[i].Lx.transpose() << endl;
+				cout << Q12[i].Uy.transpose() << endl;
+				cout << Q12[i].Ly.transpose() << endl;
 
-				if (Q12[i].Q_L > optL){
-					optL = Q12[i].Q_L;
+				if (Q12[i].Q_L > Q12[i].Q_U)
+					cout << "L > U X-<" << endl;
+
+				if (Q12[i].Q_L > maxL)
+					maxL = Q12[i].Q_L;
+
+				if (Q12[i].Q_L > Qopt.Q_L){
 					Qopt = Q12[i];
-					cout << "optL is updated." << endl;
+					cout << "Qopt is updated." << endl;
 				}
 			}
 		}
 
 		List.delete_tail(maxL);
 
-		maxL = List.maxL();
+		if (List.maxL() != maxL){
+			cout << "Q having maxL has been deleted..." << endl;
+			maxL = List.maxL();
+		}
+
 		maxU = List.root.next->Q_U;
 
 		//Debug
-		//cout << "maxU " << maxU << endl;
+		cout << "maxU " << maxU << endl;
 		cout << "maxL " << maxL << endl;
 		cout << "--------------------------------" << endl;
 

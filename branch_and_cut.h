@@ -33,12 +33,16 @@ public:
 
 class Qlist{
 public:
+	int size;
 	classQ root;
 
 	Qlist(){
+		size = 0;
+
 		root.next = &root;
 		root.prev = &root;
 		root.Q_L  = -Inf;
+		root.Q_U  = -Inf;
 	}
 
 	void add(classQ Q);

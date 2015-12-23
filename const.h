@@ -49,7 +49,6 @@ extern const double eps_local; //局所最適値関数のε
 
 extern const int    ite_relax; //緩和問題の反復回数
 extern const double eps_relax; //緩和問題のε
-extern const double alpW0;     //緩和問題のWの初期ステップサイズ
 
 extern const int    ite_bc;	//分枝限定法の反復回数
 extern const double eps_bc; //分枝限定法のε

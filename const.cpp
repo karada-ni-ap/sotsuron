@@ -7,12 +7,12 @@ extern		 int t=0;
 extern       int t_find=0;
 extern const int T=10;
 
-extern const int d=2;
+extern const int d=3;
 extern const int m=2;
-extern const int n=2;
+extern const int n=4;
 
-extern const VectorXd Ux0 = 3.0		*VectorXd::Constant(d, 1.0);
-extern const VectorXd Lx0 = -3.0	*VectorXd::Constant(d, 1.0);
+extern const VectorXd Ux0 = 2.0		*VectorXd::Constant(d, 1.0);
+extern const VectorXd Lx0 = -2.0	*VectorXd::Constant(d, 1.0);
 extern const VectorXd Uy0 = 2.0		*VectorXd::Constant(m, 1.0);
 extern const VectorXd Ly0 = -2.0	*VectorXd::Constant(m, 1.0);
 
@@ -41,18 +41,17 @@ extern MatrixXd*  C = new MatrixXd [d + 1];
 
 extern const double beta = 8.0;
 
-extern const int    ite_sev = 10000;
-extern const double eps_sev = 1.0e-4;
+extern const int    ite_sev = 100000;
+extern const double eps_sev = 1.0e-3;
 
-extern const int    ite_local = 10000;
-extern const double eps_local = 1.0e-4;
+extern const int    ite_local = 100000;
+extern const double eps_local = 1.0e-3;
 
 extern const int    ite_relax = 100000;
-extern const double eps_relax = 1.0e-4;
-extern const double alpW0 = 0.5;
+extern const double eps_relax = 1.0e-3;
 
-extern const int    ite_bc = 10;
-extern const double eps_bc = 1.0e-4;
+extern const int    ite_bc = 1000;
+extern const double eps_bc = 1.0e-2;
 
 extern const int  select = 0;			// select = 0ÇÃÇ∆Ç´sevÇÃílÇï‘Ç∑
 extern const bool bfgs_or_rand = true;	// trueÇ»ÇÁbfgsÇÅCfalseÇ»ÇÁbound_randópÇ¢ÇÈ

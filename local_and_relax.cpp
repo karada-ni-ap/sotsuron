@@ -91,10 +91,6 @@ MatrixXd projectionW(MatrixXd W, MatrixXd Wmax, MatrixXd Wmin){
 }
 
 double relaxation(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
-	VectorXd x = (ux + lx) / 2;
-	VectorXd y = (uy + ly) / 2;
-	MatrixXd W = x*y.transpose();
-
 	VectorXd dx = VectorXd::Zero(d);
 	VectorXd dy = VectorXd::Zero(m);
 	MatrixXd dW = MatrixXd::Zero(d, m);
@@ -106,14 +102,18 @@ double relaxation(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
 	MatrixXd Axy = MatrixXd::Zero(n, n);
 	VectorXd pn  = VectorXd::Zero(n);
 
-	pair<MatrixXd, MatrixXd> maxminPair = Wbound(ux, lx, uy, ly);
+	pair<MatrixXd, MatrixXd> Pair = Wbound(ux, lx, uy, ly);
 
-	double min = 0;
-	double pre = 0;
+	VectorXd x = (ux + lx) / 2;
+	VectorXd y = (uy + ly) / 2;
+	MatrixXd W = (Pair.first + Pair.second) / 2;
+
+	double min = -Inf;
+	double pre = -Inf;
 	double opt = -Inf;
 
-	double alp0 = norm(ux - lx, uy - ly, maxminPair.first - maxminPair.second) / beta;
-	double alp = 0;
+	double alp0 = norm(ux - lx, uy - ly, Pair.first - Pair.second) / beta;
+	double alp = alp0;
 
 	for (int k = 0; k < ite_relax; k++){
 		//ステップサイズ
@@ -143,11 +143,6 @@ double relaxation(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
 		min = es.eigenvalues()(0);		//Axyの最小固有値
 		opt = min > opt ? min : opt;
 
-		if (k % 100 == 0){
-			cout << k << " : " << min << endl;
-			cout << "-------------------------------" << endl;
-		}
-
 		//上昇方向
 		for (int i = 1; i <= d; i++){
 			dx(i-1) = pn.transpose() * A[i][0] * pn;
@@ -162,19 +157,17 @@ double relaxation(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
 		//x,y,Wの更新
 		x = projection(x + alp*dx, ux, lx);
 		y = projection(y + alp*dy, uy, ly);
-		W = projectionW(W + alp*dW, maxminPair.first, maxminPair.second);	
+		W = projectionW(W + alp*dW, Pair.first, Pair.second);	
 
 		//収束判定
 		if (norm(dx, dy, dW) < eps_relax){
-			cout << "極値でbreak" << endl;
+			//cout << "極値でbreak" << endl;
 			break;
 		}
 
-		else if (abs(pre - min) < eps_relax){
-			if (norm(px-x, py-y,pW-W) < eps_relax * eps_relax){
-				cout << "境界でbreak" << endl;
-				break;
-			}
+		if (abs(pre - min) < eps_relax && norm(px-x, py-y, pW-W) < eps_relax){
+			//cout << "境界でbreak" << endl;
+			break;
 		}
 
 	}

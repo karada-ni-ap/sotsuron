@@ -23,8 +23,16 @@ void debug_last(){
 	VectorXd x0 = VectorXd::Zero(d);
 	VectorXd y0 = VectorXd::Zero(m);
 
-	//branch_and_cut();
+	MatrixXd Wmax = MatrixXd::Zero(d, m);
+	MatrixXd Wmin = MatrixXd::Zero(d, m);
+
+	pair<MatrixXd, MatrixXd> Pair = Wbound(Ux0, Lx0, Uy0, Ly0);
+
+	Wmax = Pair.first;
+	Wmin = Pair.second;
+
+	branch_and_cut();
 
 	//cout << Wbound(Ux0, Lx0, Uy0, Ly0).second << endl;
-	cout << relaxation(Ux0, Lx0, Uy0, Ly0) << endl;
+	//cout << relaxation(Ux0, Lx0, Uy0, Ly0) << endl;
 }
