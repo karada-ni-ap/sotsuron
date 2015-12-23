@@ -1,9 +1,3 @@
-#include <iostream>
-#include <Eigen/Dense>
-#include <math.h>
-#include "const.h"
-#include "sev.h"
-#include "local_and_relax.h"
 #include "branch_and_cut.h"
 
 using namespace std;
@@ -197,6 +191,7 @@ double branch_and_cut(){
 
 				if (Q12[i].Q_L > Qopt.Q_L){
 					Qopt = Q12[i];
+					k_find = k;
 					cout << "Qopt is updated." << endl;
 				}
 			}
@@ -220,5 +215,5 @@ double branch_and_cut(){
 			break;
 	}
 
-	return maxL;
+	return Qopt.Q_L;
 }

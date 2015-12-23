@@ -18,12 +18,21 @@ double kernel(Eigen::VectorXd x1, Eigen::VectorXd x2){
 	return exp(-0.5 * (x1-x2).squaredNorm());
 }
 
-VectorXd bound_rand(int num){
+VectorXd bound_rand(){
 	VectorXd rand = VectorXd::Random(d);
 	VectorXd v	  = VectorXd::Zero(d);
 
 	for (int i = 0; i < d; i++){
-		v(i) = (Ux0(i) - Lx0(i)) * (rand(i) / 2) + (Ux0(i) + Lx0(i)) / 2;
+		v(i) = 0.5 * (Ux0(i) - Lx0(i)) * rand(i) + 0.5 * (Ux0(i) + Lx0(i));
+	}
+	return v;
+}
+
+VectorXd projection(VectorXd z, VectorXd U, VectorXd L){
+	VectorXd v = z;
+	for (int i = 0; i < z.size(); i++){
+		if (z(i) > U(i))		v(i) = U(i);
+		else if (z(i) < L(i))	v(i) = L(i);
 	}
 	return v;
 }

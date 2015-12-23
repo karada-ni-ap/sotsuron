@@ -4,13 +4,12 @@
 #include "const.h"
 #include "myfunc.h"
 #include "obj.h"
+#include "sev.h"
 #include "argmax.h"
 #include "debug.h"
 
 using namespace std;
 using namespace Eigen;
-
-extern VectorXd m1 = VectorXd::Constant(T,mean);
 
 Eigen::VectorXd k(Eigen::VectorXd x){
 	if (t == 0){
@@ -26,7 +25,17 @@ Eigen::VectorXd k(Eigen::VectorXd x){
 	}
 }
 
-void update_K(Eigen::VectorXd x){
+void update_m(){
+	VectorXd ones = VectorXd::Constant(t, 1.0);
+	VectorXd v = Kinv.topLeftCorner(t, t) * ones;
+
+	double a   = v.transpose() * f.head(t);
+	double b   = v.transpose() * ones;
+
+	mean = a / b;
+}
+
+void update_K(Eigen::VectorXd x){ // x = x_nextを想定
 	if (t == 0){
 		K(0,0)    = 1;
 		Kinv(0,0) = 1;
@@ -57,6 +66,7 @@ double mu(Eigen::VectorXd x){
 		return mean;
 
 	else{
+		VectorXd m1 = VectorXd::Constant(t, mean);
 		VectorXd kx = k(x);
 		return mean + kx.transpose() * Kinv.topLeftCorner(t, t) * (f.head(t)-m1.head(t));
 	}
@@ -69,6 +79,7 @@ double sigma(Eigen::VectorXd x){
 
 	if (sigma2 < 0)
 		return 0;
+
 	else
 		return sqrt(sigma2);
 }
@@ -89,19 +100,15 @@ double u(Eigen::VectorXd x){
 
 VectorXd u_over_k(VectorXd x){
 	double sigma_ = sigma(x);
+	double mu_ = mu(x);
+	double gamma = (mu_ - maxf) / sigma_;
 
-	if (sigma_ < sigma_thre)
-		return VectorXd::Zero(t);
+	VectorXd m1 = VectorXd::Constant(t,mean);
 
-	else{
-		double mu_ = mu(x);
-		double gamma = (mu_ - maxf) / sigma_;
+	VectorXd v = VectorXd::Zero(t);
+	v = cdf(gamma)*(f.head(t) - m1.head(t)) - (pdf(gamma) / sigma_)*k(x);
 
-		VectorXd v = VectorXd::Zero(t);
-		v = cdf(gamma)*(f.head(t) - m1.head(t)) - (pdf(gamma) / sigma_)*k(x);
-
-		return Kinv.topLeftCorner(t, t)*v;
-	}
+	return Kinv.topLeftCorner(t, t)*v;
 }
 
 MatrixXd k_over_x(VectorXd x){
@@ -113,7 +120,11 @@ MatrixXd k_over_x(VectorXd x){
 }
 
 VectorXd u_over_x(VectorXd x){
-	return k_over_x(x)*u_over_k(x);
+	if (sigma(x) < sigma_thre)
+		return VectorXd::Zero(d);
+	
+	else
+		return k_over_x(x)*u_over_k(x);
 }
 
 double BO(){
@@ -123,12 +134,14 @@ double BO(){
 	for (t = 0; t < T; t++){
 		//【tはこの時点におけるデータセットのサイズ】//
 
+		update_m();
 		x_next = argmax_u();
 		debug_inside(x_next, x_opt);
 
 		//データセットの更新
 		D_q.col(t) = x_next;
-		f(t) = obj(x_next, select);
+
+		f(t) = sev_x(x_next, (Uy0 + Ly0) / 2, Uy0, Ly0).first;
 
 		if (f(t)>maxf){
 			t_find = t;
@@ -138,7 +151,7 @@ double BO(){
 		//【この時点でデータセットのサイズはt+1】//
 
 		update_K(x_next);
-		//【update_Kが行われた後，Kのサイズはt+1】//
+		//【updateが行われた後，Kのサイズはt+1】//
 	}
 
 	return maxf;

@@ -1,9 +1,5 @@
-#include <iostream>
-#include <Eigen/Dense>
-#include <math.h>
-#include "const.h"
-#include "sev.h"
 #include "local_and_relax.h"
+#include "const.h"
 
 using namespace std;
 using namespace Eigen;

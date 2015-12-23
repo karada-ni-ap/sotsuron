@@ -1,9 +1,7 @@
-#include "const.h"
 #include <Eigen/Dense>
 
-extern VectorXd m1;
-
 Eigen::VectorXd k(Eigen::VectorXd x);
+void update_m();
 void update_K(Eigen::VectorXd x);
 
 double mu(Eigen::VectorXd x);

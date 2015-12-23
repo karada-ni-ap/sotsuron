@@ -1,8 +1,5 @@
 #include <iostream>
 #include <Eigen/Dense>
-#include <math.h>
-#include "const.h"
-#include "sev.h"
 
 using namespace std;
 using namespace Eigen;

@@ -1,9 +1,8 @@
 #include <iostream>
 #include <Eigen/Dense>
-#include <math.h>
 #include "const.h"
 #include "sev.h"
-#include "argmax.h"
+#include "myfunc.h"
 
 using namespace std;
 using namespace Eigen;

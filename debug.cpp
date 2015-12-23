@@ -6,7 +6,6 @@
 #include "myfunc.h"
 #include "obj.h"
 #include "argmax.h"
-#include "local_and_relax.h"
 #include "branch_and_cut.h"
 
 using namespace std;
@@ -31,7 +30,17 @@ void debug_last(){
 	Wmax = Pair.first;
 	Wmin = Pair.second;
 
-	branch_and_cut();
+	cout << branch_and_cut() << endl;
+
+	clock_t start = clock();
+
+	BO();
+	cout << "t_find : " << t_find << endl;
+	cout << "maxf : " << maxf << endl;
+
+	clock_t end = clock();
+
+	cout << "time : " << end - start << endl;
 
 	//cout << Wbound(Ux0, Lx0, Uy0, Ly0).second << endl;
 	//cout << relaxation(Ux0, Lx0, Uy0, Ly0) << endl;
