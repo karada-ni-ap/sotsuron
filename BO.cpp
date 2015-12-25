@@ -127,7 +127,7 @@ VectorXd u_over_x(VectorXd x){
 		return k_over_x(x)*u_over_k(x);
 }
 
-double BO(){
+pair<double, VectorXd> BO(){
 	VectorXd x_next = VectorXd::Zero(d);
 	VectorXd x_opt  = VectorXd::Zero(d);
 
@@ -154,5 +154,5 @@ double BO(){
 		//【updateが行われた後，Kのサイズはt+1】//
 	}
 
-	return maxf;
+	return make_pair(maxf, x_opt);
 }

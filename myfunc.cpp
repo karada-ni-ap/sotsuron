@@ -1,10 +1,4 @@
-#include <iostream>
-#include <Eigen/Dense>
-#include <math.h>
-#include "const.h"
-
-using namespace std;
-using namespace Eigen;
+#include "myfunc.h"
 
 double pdf(double x){
 	return exp(-0.5 * x * x) / sqrt(2 * M_PI);

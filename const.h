@@ -1,4 +1,8 @@
+#include <iostream>
 #include <Eigen/Dense>
+#include <math.h>
+
+using namespace std;
 using namespace Eigen;
 
 extern const int Inf; //大きい値
@@ -15,14 +19,15 @@ extern const VectorXd Lx0;
 extern const VectorXd Uy0;
 extern const VectorXd Ly0;
 
-extern const double Alp0;	 // バックトラック法のαの初期値
-extern const double rho;	 // バックトラック法のρ
-extern const double c1;		 // バックトラック法のc1
+extern const double alp0;	// バックトラック法のαの初期値
+extern const double rho;	// バックトラック法のρ
+extern const double c1;		// バックトラック法のc1
+extern const double c2;		// バックトラック法のc2
+
+extern const double eps_H; // H公式のε
 
 extern const int    ite_bfgs;	 // BFGSの反復回数
 extern const double eps_bfgs;	 // BFGSの収束判定の閾値
-
-extern const double eps_H; // H公式のε
 
 extern const int    ite_sdm; // 最急降下法の反復回数
 extern const double eps_sdm; // 最急降下法の収束判定の閾値

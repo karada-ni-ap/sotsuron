@@ -1,12 +1,11 @@
-#include <Eigen/Dense>
-using namespace Eigen;
+#include "const.h"
 
 extern const int Inf = 100000;
 
 extern		 int t=0;
-extern const int T=20;
+extern const int T=40;
 
-extern const int d=3;
+extern const int d=5;
 extern const int m=4;
 extern const int n=4;
 
@@ -15,14 +14,15 @@ extern const VectorXd Lx0 = -2.0	*VectorXd::Constant(d, 1.0);
 extern const VectorXd Uy0 = 2.0		*VectorXd::Constant(m, 1.0);
 extern const VectorXd Ly0 = -2.0	*VectorXd::Constant(m, 1.0);
 
-extern const double Alp0 = (Ux0-Lx0).norm() / 16;
-extern const double rho = 0.8;
-extern const double c1 = 0.5;
+extern const double alp0 = 1.0;
+extern const double rho = 0.95;
+extern const double c1 = 0.6;
+extern const double c2 = 0.8;
+
+extern const double eps_H = 1.0e-2;
 
 extern const int    ite_bfgs = 100000;
 extern const double eps_bfgs = 1.0e-3;
-
-extern const double eps_H = 1.0e-3;
 
 extern const int    ite_sdm = 100000;
 extern const double eps_sdm = 1.0e-3;

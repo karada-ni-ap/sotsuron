@@ -1,20 +1,33 @@
-#include <iostream>
-#include <Eigen/Dense>
-#include "const.h"
-#include "myfunc.h"
-#include "BO.h"
-
-using namespace std;
-using namespace Eigen;
+#include "argmax.h"
 
 MatrixXd update_H(MatrixXd H, VectorXd s, VectorXd y){
 	if (y.norm() < eps_H){
-		cout << "y << 1" << endl;
+		cout << "|y| << 1" << endl;
 		//return MatrixXd::Zero(d, d);
 		return MatrixXd::Identity(d, d);
 	}
-	
-	else{
+
+	if (y.dot(s) > 0){
+		VectorXd a = s.normalized();
+		VectorXd b = y.normalized();
+		double bta = b.dot(a);
+		double c = s.norm() / y.norm();
+
+		MatrixXd P = MatrixXd::Identity(d, d) - (b*a.transpose()) / bta;
+		return P*H*P + c * a*a.transpose() / bta;
+	}
+
+	/*else{
+		double yts = y.transpose()*s;
+		VectorXd Hy = H*y;
+		MatrixXd Hyst = Hy*s.transpose();
+		return
+			H
+			+ ( (yts + y.transpose()*Hy) / yts )*s*s.transpose()
+			- ( Hyst+ Hyst.transpose() ) / yts;
+	}*/
+
+	/*else{
 		VectorXd a = s.normalized();
 		VectorXd b = y.normalized();
 		double bta = b.dot(a);
@@ -24,32 +37,43 @@ MatrixXd update_H(MatrixXd H, VectorXd s, VectorXd y){
 		return H
 			- (a*Hb.transpose() + Hb*a.transpose()) / bta;
 		+(s.norm() / (bta*y.norm()) + b.dot(Hb) / (bta*bta)) * a * a.transpose();
+	}*/
+
+	else{ //³’è’l‚ª”j‚ê‚é‰Â”\«‚ ‚è
+		cout << "<y,s> <= 0" << endl;
+		return MatrixXd::Identity(d, d);
 	}
+
 }
 
 double back_track(VectorXd X, VectorXd Grad, VectorXd dir){
-	double Alp = Alp0;
+	double alp = alp0;
 	double uX = u(X);
 	double Gd = Grad.dot(dir);
 
-	//dir‚ª~‰º•ûŒü‚Å‚È‚¢
-	//H‚Í³’è’l‚Å‚ ‚é‚Ì‚ÅC–{—ˆ‚ ‚è‚¦‚È‚¢‚ª...
+	//dir‚ª~‰º•ûŒü‚Å‚È‚¢ÌHƒO
 	if (Gd < 0){
-		cout << "Gd is negative" << endl;
+		cout << "!!! Gd is negative !!!" << endl;
 		return 0;
 	}
 
 	//dir‚ª~‰º•ûŒü
 	else {
 		while (true){
-			if (Alp < sigma_thre && u(X + Alp*dir) < sigma_thre)
+			if (alp < sigma_thre && u(X + alp*dir) < sigma_thre){
+				cout << "check check check check check check check check" << endl;
 				return 0;
-			else if ( u(X + Alp*dir) >= uX + c1*Alp*Gd ) //Armijo‚ÌğŒ‚ğ–‚½‚·
+			}
+			else if (u(X + alp*dir) >= uX + c1*alp*Gd){ //Armijo‚ÌğŒ‚ğ–‚½‚·
+				if (dir.transpose() * (u_over_x(X + alp*dir) - c2*Grad) > 0){ //Wolfe‚ÌğŒ‚ğ–‚½‚³‚È‚¢
+					cout << "but it doesn't satisfy Wolfe..." << endl;
+				}
 				break;
+			}
 			else
-				Alp *= rho;
+				alp *= rho;
 		}
-		return Alp;
+		return alp;
 	}
 }
 
@@ -79,7 +103,7 @@ VectorXd bfgs(VectorXd x0){
 		Xnew = projection(Xold + alp*dir, Ux0, Lx0);
 
 		if ((Xnew - Xold).norm() < eps_bfgs){
-			cout << "‹«ŠE‚Åbreak" << endl;
+			//cout << "‹«ŠE‚Åbreak" << endl;
 			break;
 		}
 
@@ -87,7 +111,7 @@ VectorXd bfgs(VectorXd x0){
 		Gnew = u_over_x(Xnew);
 
 		if (Gnew.norm() < eps_bfgs){
-			cout << "‹É’l‚Åbreak" << endl;
+			//cout << "‹É’l‚Åbreak" << endl;
 			break;
 		}
 

@@ -30,7 +30,7 @@ void debug_last(){
 	Wmax = Pair.first;
 	Wmin = Pair.second;
 
-	cout << branch_and_cut() << endl;
+	//cout << branch_and_cut() << endl;
 
 	clock_t start = clock();
 
