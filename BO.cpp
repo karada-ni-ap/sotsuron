@@ -144,9 +144,10 @@ pair<double, VectorXd> BO(){
 		f(t) = sev_x(x_next, (Uy0 + Ly0) / 2, Uy0, Ly0).first;
 
 		if (f(t)>maxf){
-			t_find = t;
 			maxf = f(t);
 			x_opt = x_next;
+			t_find = t;
+			finding_time_BO = clock();
 		}
 		//【この時点でデータセットのサイズはt+1】//
 

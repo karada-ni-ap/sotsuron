@@ -1,6 +1,7 @@
 #include <iostream>
 #include <Eigen/Dense>
 #include <math.h>
+#include <time.h>
 
 using namespace std;
 using namespace Eigen;
@@ -20,11 +21,12 @@ extern const VectorXd Uy0;
 extern const VectorXd Ly0;
 
 extern const double alp0;	// バックトラック法のαの初期値
+extern const double eps_alp;// バックトラック法のαのbreak条件
 extern const double rho;	// バックトラック法のρ
 extern const double c1;		// バックトラック法のc1
 extern const double c2;		// バックトラック法のc2
 
-extern const double eps_H; // H公式のε
+extern const double eps_y; // H公式のε
 
 extern const int    ite_bfgs;	 // BFGSの反復回数
 extern const double eps_bfgs;	 // BFGSの収束判定の閾値
@@ -65,6 +67,9 @@ extern const double eps_bc; //分枝限定法のε
 
 extern int t_find; // BOにおいて最大値を探索したときの反復回数
 extern int k_find; // BCにおいて最大値を探索したときの反復回数
+
+extern clock_t finding_time_BO;
+extern clock_t finding_time_BC;
 
 extern const int  select;		// 目的関数の切り替え
 extern const bool bfgs_or_rand;	// argmaxの切り替え（BFGS⇔ランダム）

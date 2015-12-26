@@ -153,6 +153,7 @@ double branch_and_cut(){
 	Q0.calculate_lo();
 
 	Qopt = Q0;
+	finding_time_BC = clock();
 
 	double maxU = Q0.Q_U;
 	double maxL = Q0.Q_L;
@@ -192,6 +193,7 @@ double branch_and_cut(){
 				if (Q12[i].Q_L > Qopt.Q_L){
 					Qopt = Q12[i];
 					k_find = k;
+					finding_time_BC = clock();
 					cout << "Qopt is updated." << endl;
 				}
 			}

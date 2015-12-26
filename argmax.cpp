@@ -1,13 +1,20 @@
 #include "argmax.h"
 
 MatrixXd update_H(MatrixXd H, VectorXd s, VectorXd y){
-	if (y.norm() < eps_H){
-		cout << "|y| << 1" << endl;
-		//return MatrixXd::Zero(d, d);
+	double yts = y.dot(s);
+	
+	if (y.norm() < eps_y){
+		// |y| << 1
 		return MatrixXd::Identity(d, d);
 	}
 
-	if (y.dot(s) > 0){
+	else if (yts <= 0){
+		// <y,s> <= 0
+		//³’è’l‚ª”j‚ê‚é‰Â”\«‚ ‚è
+		return MatrixXd::Identity(d, d);
+	}
+
+	else{
 		VectorXd a = s.normalized();
 		VectorXd b = y.normalized();
 		double bta = b.dot(a);
@@ -16,34 +23,6 @@ MatrixXd update_H(MatrixXd H, VectorXd s, VectorXd y){
 		MatrixXd P = MatrixXd::Identity(d, d) - (b*a.transpose()) / bta;
 		return P*H*P + c * a*a.transpose() / bta;
 	}
-
-	/*else{
-		double yts = y.transpose()*s;
-		VectorXd Hy = H*y;
-		MatrixXd Hyst = Hy*s.transpose();
-		return
-			H
-			+ ( (yts + y.transpose()*Hy) / yts )*s*s.transpose()
-			- ( Hyst+ Hyst.transpose() ) / yts;
-	}*/
-
-	/*else{
-		VectorXd a = s.normalized();
-		VectorXd b = y.normalized();
-		double bta = b.dot(a);
-
-		VectorXd Hb = H*b;
-
-		return H
-			- (a*Hb.transpose() + Hb*a.transpose()) / bta;
-		+(s.norm() / (bta*y.norm()) + b.dot(Hb) / (bta*bta)) * a * a.transpose();
-	}*/
-
-	else{ //³’è’l‚ª”j‚ê‚é‰Â”\«‚ ‚è
-		cout << "<y,s> <= 0" << endl;
-		return MatrixXd::Identity(d, d);
-	}
-
 }
 
 double back_track(VectorXd X, VectorXd Grad, VectorXd dir){
@@ -51,25 +30,23 @@ double back_track(VectorXd X, VectorXd Grad, VectorXd dir){
 	double uX = u(X);
 	double Gd = Grad.dot(dir);
 
-	//dir‚ª~‰º•ûŒü‚Å‚È‚¢ÌHƒO
+	//dir‚ªã¸•ûŒü‚Å‚È‚¢ÌHƒO
 	if (Gd < 0){
 		cout << "!!! Gd is negative !!!" << endl;
 		return 0;
 	}
 
-	//dir‚ª~‰º•ûŒü
+	//dir‚ªã¸•ûŒü
 	else {
 		while (true){
-			if (alp < sigma_thre && u(X + alp*dir) < sigma_thre){
-				cout << "check check check check check check check check" << endl;
-				return 0;
-			}
-			else if (u(X + alp*dir) >= uX + c1*alp*Gd){ //Armijo‚ÌğŒ‚ğ–‚½‚·
-				if (dir.transpose() * (u_over_x(X + alp*dir) - c2*Grad) > 0){ //Wolfe‚ÌğŒ‚ğ–‚½‚³‚È‚¢
-					cout << "but it doesn't satisfy Wolfe..." << endl;
-				}
+			if (u(X + alp*dir) >= uX + c1*alp*Gd){ //Armijo‚ÌğŒ‚ğ–‚½‚·
+				//if (dir.transpose() * (u_over_x(X + alp*dir) - c2*Grad) > 0){ //Wolfe‚ÌğŒ‚ğ–‚½‚³‚È‚¢
+				//	cout << "but it doesn't satisfy Wolfe..." << endl;
+				//}
 				break;
 			}
+			else if (alp < eps_alp)
+				return 0;
 			else
 				alp *= rho;
 		}
@@ -87,7 +64,7 @@ VectorXd bfgs(VectorXd x0){
 	VectorXd Gnew = Gold;
 
 	if (Gnew.norm() < eps_bfgs){
-		cout << "‘¦break" << endl;
+		//cout << "‘¦break" << endl;
 		return Xnew;
 	}
 
@@ -133,7 +110,7 @@ VectorXd sdm(VectorXd x0){
 		dir = u_over_x(Xnew);
 
 		if (dir.norm() < eps_sdm){
-			cout << "‹É’l‚Åbreak" << endl;
+			//cout << "‹É’l‚Åbreak" << endl;
 			break;
 		}
 
@@ -143,7 +120,7 @@ VectorXd sdm(VectorXd x0){
 		Xnew = projection(Xold + alp*dir, Ux0, Lx0);
 
 		if ((Xnew - Xold).norm() < eps_sdm){
-			cout << "‹«ŠE‚Åbreak" << endl;
+			//cout << "‹«ŠE‚Åbreak" << endl;
 			break;
 		}
 	}
@@ -165,8 +142,7 @@ VectorXd argmax_u(){
 		VectorXd Xopt = VectorXd::Random(d);
 		VectorXd Xtmp = VectorXd::Zero(d);
 
-		for (int i = 0; i < num_of_start; i++){
-			
+		for (int i = 0; i < num_of_start; i++){	
 			//Xtmp = sdm(bound_rand());
 			Xtmp = bfgs(bound_rand());
 			
