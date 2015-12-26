@@ -111,7 +111,7 @@ double relaxation(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
 	double pre = -Inf;
 	double opt = -Inf;
 
-	double alp0 = norm(ux - lx, uy - ly, Pair.first - Pair.second) / beta;
+	double alp0 = 1.0; //norm(ux - lx, uy - ly, Pair.first - Pair.second) / beta;
 	double alp = alp0;
 
 	for (int k = 0; k < ite_relax; k++){

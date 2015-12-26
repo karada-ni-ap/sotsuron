@@ -20,6 +20,7 @@ pair<classQ, classQ> classQ::devide(){
 	double max_x = -1;
 	double max_y = -1;
 
+	//èÄîı
 	for (int i = 0; i < d; i++){
 		if (Ux(i) - Lx(i) > max_x){
 			max_x = Ux(i) - Lx(i);
@@ -34,17 +35,28 @@ pair<classQ, classQ> classQ::devide(){
 		}
 	}
 
-	VectorXd ex = VectorXd::Zero(d);
-	VectorXd ey = VectorXd::Zero(m);
+	//ï™äÑ
+	if (max_x >= max_y){
+		VectorXd ex = VectorXd::Zero(d);
 
-	ex(longest_x) = 1;
-	ey(longest_y) = 1;
+		ex(longest_x) = 1;
 
-	max_x /= 2.0;
-	max_y /= 2.0;
+		max_x /= 2.0;
 
-	Pair.first .makeQ(Ux, Lx + max_x*ex, Uy, Ly + max_y*ey);
-	Pair.second.makeQ(Ux - max_x*ex, Lx, Uy - max_y*ey, Ly);
+		Pair.first .makeQ(Ux, Lx + max_x*ex, Uy, Ly);
+		Pair.second.makeQ(Ux - max_x*ex, Lx, Uy, Ly);
+	}
+
+	else{
+		VectorXd ey = VectorXd::Zero(m);
+
+		ey(longest_y) = 1;
+
+		max_y /= 2.0;
+
+		Pair.first .makeQ(Ux, Lx, Uy, Ly + max_y*ey);
+		Pair.second.makeQ(Ux, Lx, Uy - max_y*ey, Ly);
+	}
 
 	return Pair;
 }
@@ -164,7 +176,7 @@ double branch_and_cut(){
 	for (int k = 0; k < ite_bc; k++){
 		cout << "k is " << k << endl;
 
-		cout << "List size before extraxt : " << List.size << endl;
+		//cout << "List size before extraxt : " << List.size << endl;
 		Q = List.extract();
 
 		maxL = List.maxL();
@@ -177,7 +189,7 @@ double branch_and_cut(){
 			if (Q12[i].Q_U > maxL){
 				Q12[i].calculate_lo();
 				List.add(Q12[i]);
-				cout << "Q" << i + 1 << " : " << Q12[i].Q_U << " > " << Q12[i].Q_L << endl;
+				//cout << "Q" << i + 1 << " : " << Q12[i].Q_U << " > " << Q12[i].Q_L << endl;
 
 				cout << Q12[i].Ux.transpose() << endl;
 				cout << Q12[i].Lx.transpose() << endl;

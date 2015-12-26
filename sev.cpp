@@ -43,7 +43,7 @@ pair<double, VectorXd> sev_x(VectorXd x, VectorXd y0, VectorXd U, VectorXd L){
 	double min     = 0;
 	double min_pre = 0;
 
-	double   alp0 = (U - L).norm() / beta;
+	double   alp0 = 1.0; //(U - L).norm() / beta;
 	double   alp  = alp0;
 
 	//yについて劣勾配法
@@ -103,7 +103,7 @@ pair<double, VectorXd> sev_y(VectorXd y, VectorXd x0, VectorXd U, VectorXd L){
 	double min     = 0;
 	double min_pre = 0;
 
-	double alp0 = (U - L).norm() / beta;
+	double alp0 = 1.0; //(U - L).norm() / beta;
 	double alp  = alp0;
 
 	//xについて劣勾配法
