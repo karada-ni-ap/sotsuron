@@ -7,6 +7,7 @@
 #include "sev.h"
 #include "argmax.h"
 #include "debug.h"
+#include "local_and_relax.h"
 
 using namespace std;
 using namespace Eigen;
@@ -93,15 +94,15 @@ double u(Eigen::VectorXd x){
 
 	else{
 		double mu_ = mu(x);
-		double gamma = (mu_ - maxf) / sigma_;
-		return (mu_ - maxf)*cdf(gamma) + sigma_*pdf(gamma);
+		double gamma = (mu_ - maxf_BO - xi) / sigma_;
+		return (mu_ - maxf_BO - xi)*cdf(gamma) + sigma_*pdf(gamma);
 	}
 }
 
 VectorXd u_over_k(VectorXd x){
 	double sigma_ = sigma(x);
 	double mu_ = mu(x);
-	double gamma = (mu_ - maxf) / sigma_;
+	double gamma = (mu_ - maxf_BO - xi) / sigma_;
 
 	VectorXd m1 = VectorXd::Constant(t,mean);
 
@@ -143,9 +144,10 @@ pair<double, VectorXd> BO(){
 
 		f(t) = sev_x(x_next, (Uy0 + Ly0) / 2, Uy0, Ly0).first;
 
-		if (f(t)>maxf){
-			maxf = f(t);
+		if (f(t)>maxf_BO){
 			x_opt = x_next;
+
+			maxf_BO = f(t);
 			t_find = t;
 			finding_time_BO = clock();
 		}
@@ -155,5 +157,64 @@ pair<double, VectorXd> BO(){
 		//【updateが行われた後，Kのサイズはt+1】//
 	}
 
-	return make_pair(maxf, x_opt);
+	return make_pair(maxf_BO, x_opt);
+}
+
+pair<double, VectorXd> lsBO(){
+	VectorXd x_next = VectorXd::Zero(d);
+	VectorXd x_lo   = VectorXd::Zero(d);
+
+	pair<double, VectorXd> Pair_next;
+	pair<double, VectorXd> Pair_lo;
+
+	for (t = 0; t < T; t++){
+		cout << "t : " << t << endl;
+		//【tはこの時点におけるデータセットのサイズ】//
+
+		update_m();
+
+		cout << "x_next" << endl;
+
+		x_next = argmax_u();
+		Pair_next = sev_x(x_next, (Uy0 + Ly0) / 2, Uy0, Ly0); // Pair_next = <f(x_next), y0>
+
+		f(t) = Pair_next.first;
+		D_q.col(t) = x_next;
+		update_K(x_next);
+
+		if (f(t)>maxf_lsBO){
+			t++;
+			if (t == T) break;
+
+			cout << "local search" << endl;
+
+			Pair_lo = local_search(x_next, Pair_next.second); // Pair_lo = <f(x_lo), x_lo>
+			x_lo = Pair_lo.second;
+
+			f(t) = Pair_lo.first;
+			D_q.col(t) = x_lo;
+			update_K(x_lo);
+
+			maxf_lsBO = f(t);
+			l_find = t;
+			finding_time_lsBO = clock();
+
+			t++;
+			if (t == T) break;
+
+			cout << "oppsite sampling" << endl;
+
+			x_next = 2 * x_lo - x_next; //x_loを挟んで反対側の点
+			Pair_next = sev_x(x_next, (Uy0 + Ly0) / 2, Uy0, Ly0);
+			
+			f(t) = Pair_next.first;
+			D_q.col(t) = x_next;
+			update_K(x_next);
+		}
+
+		cout << "-----------------------------------" << endl;
+
+	}
+
+	return make_pair(maxf_lsBO, x_lo);
 }

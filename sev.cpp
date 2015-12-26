@@ -144,3 +144,34 @@ pair<double, VectorXd> sev_y(VectorXd y, VectorXd x0, VectorXd U, VectorXd L){
 
 	return make_pair(min, x_pre);
 }
+
+pair<double, VectorXd> local_search(VectorXd x0, VectorXd y0){
+	VectorXd x = x0;
+	VectorXd y = y0;
+
+	pair<double, VectorXd> X;
+	pair<double, VectorXd> Y;
+
+	double tmp = 0;
+	double pre = 0;
+	double max = -Inf;
+
+	for (int k = 0; k < ite_local; k++){
+		Y = sev_x(x, y, Uy0, Ly0);
+		y = Y.second;
+		
+		X = sev_y(y, x, Ux0, Ly0);
+		x = X.second;
+
+		pre = tmp;
+		tmp = X.first;
+
+		max = tmp>max ? tmp : max;
+
+		//Žû‘©”»’è
+		if (abs(tmp - pre) < eps_local)
+			break;
+	}
+
+	return make_pair(max, x); //‹ÇŠÅ“K‰ð(x*, y*)‚Ìx*‚ð•Ô‚·
+}

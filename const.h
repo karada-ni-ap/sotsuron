@@ -38,8 +38,10 @@ extern const int num_of_start; // BFGSの初期点の数
 
 extern       double mean;		// GPの事前分布
 extern const double sigma_thre; // u=0とする閾値
+extern const double xi;			// トレードオフパラメータ
 
-extern double maxf;			// データセットの最大値
+extern double maxf_BO;			// データセットの最大値（BO）
+extern double maxf_lsBO;		// データセットの最大値（lsBO）
 
 extern MatrixXd D_q;		// クエリxのデータセット
 extern VectorXd f;			// 値f(x)のデータセット
@@ -65,11 +67,13 @@ extern const double eps_relax; //緩和問題のε
 extern const int    ite_bc;	//分枝限定法の反復回数
 extern const double eps_bc; //分枝限定法のε
 
-extern int t_find; // BOにおいて最大値を探索したときの反復回数
-extern int k_find; // BCにおいて最大値を探索したときの反復回数
+extern int t_find; // BO  において最大値を探索したときの反復回数
+extern int l_find; // lsBOにおいて最大値を探索したときの反復回数
+extern int k_find; // BC  において最大値を探索したときの反復回数
 
 extern clock_t finding_time_BO;
 extern clock_t finding_time_BC;
+extern clock_t finding_time_lsBO;
 
 extern const int  select;		// 目的関数の切り替え
 extern const bool bfgs_or_rand;	// argmaxの切り替え（BFGS⇔ランダム）
