@@ -14,18 +14,18 @@ using namespace Eigen;
 
 int main(void)
 {	
-	initA();
+	double maxf_of_each_d[5];
 
-	//double max_with_BO = 0;
-	//double max_with_BC = 0;
+	for (d = 1; d <= 5; d++){
+		initA();
+		initialize_for_BO();
+		BO();
+		maxf_of_each_d[d - 1] = maxf_BO;
+	}
 
-	//max_with_BO = BO();
-	//cout << "max with BO is " << max_with_BO << endl;
-
-	//max_with_BC = branch_and_cut();
-	//cout << "max with BC is " << max_with_BC << endl;
-
-	debug_last();
+	for (int i = 0; i < 5; i++){
+		cout << "d=" << i + 1 << " : " << maxf_of_each_d[i] << endl;
+	}
 
 	return 0;
 }

@@ -11,9 +11,9 @@ extern const int Inf; //大きい値
 extern		 int t;			// BOの反復回数
 extern const int T;			// BOの反復回数の上限
 
-extern const int d; // xの次元
-extern const int m; // yの次元
-extern const int n; // 対称行列のサイズ
+extern int d; // xの次元
+extern int m; // yの次元
+extern int n; // 対称行列のサイズ
 
 extern const VectorXd Ux0;
 extern const VectorXd Lx0;

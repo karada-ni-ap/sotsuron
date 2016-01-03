@@ -11,5 +11,8 @@ double u(Eigen::VectorXd x);
 VectorXd u_over_k(VectorXd x);
 MatrixXd k_over_x(VectorXd x);
 VectorXd u_over_x(VectorXd x);
+
 pair<double, VectorXd> BO();
 pair<double, VectorXd> lsBO();
+
+void initialize_for_BO();

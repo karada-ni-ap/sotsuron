@@ -202,7 +202,7 @@ pair<double, VectorXd> lsBO(){
 			t++;
 			if (t == T) break;
 
-			cout << "oppsite sampling" << endl;
+			cout << "opposite sampling" << endl;
 
 			x_next = 2 * x_lo - x_next; //x_lo‚ð‹²‚ñ‚Å”½‘Î‘¤‚Ì“_
 			Pair_next = sev_x(x_next, (Uy0 + Ly0) / 2, Uy0, Ly0);
@@ -217,4 +217,16 @@ pair<double, VectorXd> lsBO(){
 	}
 
 	return make_pair(maxf_lsBO, x_lo);
+}
+
+void initialize_for_BO(){
+	t = 0;
+
+	D_q = MatrixXd::Zero(d, T);
+	f = VectorXd::Zero(T);
+	K = MatrixXd::Zero(T, T);
+	Kinv = MatrixXd::Zero(T, T);
+
+	maxf_BO = -Inf;
+	maxf_lsBO = -Inf;
 }

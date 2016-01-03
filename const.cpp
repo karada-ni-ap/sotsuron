@@ -3,11 +3,11 @@
 extern const int Inf = 100000;
 
 extern		 int t=0;
-extern const int T=70;
+extern const int T=30;
 
-extern const int d=5;
-extern const int m=5;
-extern const int n=5;
+extern int d=5;
+extern int m=5;
+extern int n=5;
 
 extern const VectorXd Ux0 = 2.0		*VectorXd::Constant(d, 1.0);
 extern const VectorXd Lx0 = -2.0	*VectorXd::Constant(d, 1.0);
@@ -58,7 +58,7 @@ extern const double eps_local = 1.0e-2;
 extern const int    ite_relax = 100000;
 extern const double eps_relax = 1.0e-2;
 
-extern const int    ite_bc = 50;
+extern const int    ite_bc = 60;
 extern const double eps_bc = 1.0e-2;
 
 extern int t_find = 0;
