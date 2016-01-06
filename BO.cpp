@@ -176,6 +176,7 @@ pair<double, VectorXd> lsBO(){
 		cout << "x_next" << endl;
 
 		x_next = argmax_u();
+
 		Pair_next = sev_x(x_next, (Uy0 + Ly0) / 2, Uy0, Ly0); // Pair_next = <f(x_next), y0>
 
 		f(t) = Pair_next.first;
@@ -184,7 +185,11 @@ pair<double, VectorXd> lsBO(){
 
 		if (f(t)>maxf_lsBO){
 			t++;
-			if (t == T) break;
+			if (t == T){
+				l_find = t;
+				maxf_lsBO = f(T - 1);
+				break;
+			}
 
 			cout << "local search" << endl;
 
@@ -205,9 +210,14 @@ pair<double, VectorXd> lsBO(){
 			cout << "opposite sampling" << endl;
 
 			x_next = 2 * x_lo - x_next; //x_lo‚ð‹²‚ñ‚Å”½‘Î‘¤‚Ì“_
+			x_next = projection(x_next, Ux0, Lx0);
 			Pair_next = sev_x(x_next, (Uy0 + Ly0) / 2, Uy0, Ly0);
 			
 			f(t) = Pair_next.first;
+			if (f(t) > maxf_lsBO){
+				maxf_lsBO = f(t);
+				l_find = t;
+			}
 			D_q.col(t) = x_next;
 			update_K(x_next);
 		}
@@ -221,12 +231,27 @@ pair<double, VectorXd> lsBO(){
 
 void initialize_for_BO(){
 	t = 0;
+	mean = 0;
 
 	D_q = MatrixXd::Zero(d, T);
 	f = VectorXd::Zero(T);
 	K = MatrixXd::Zero(T, T);
 	Kinv = MatrixXd::Zero(T, T);
 
+	Ux0 = Ux0(0)	*VectorXd::Constant(d, 1.0);
+	Lx0 = Lx0(0)	*VectorXd::Constant(d, 1.0);
+	Uy0 = Uy0(0)	*VectorXd::Constant(m, 1.0);
+	Ly0 = Ly0(0)	*VectorXd::Constant(m, 1.0);
+
 	maxf_BO = -Inf;
 	maxf_lsBO = -Inf;
+}
+
+void deleting_for_BO(){
+	for (int i = 0; i < (d + 1); i++)
+		delete[] A[i];
+	
+	delete[] A;
+	delete[] B;
+	delete[] C;
 }

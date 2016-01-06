@@ -3,16 +3,16 @@
 extern const int Inf = 100000;
 
 extern		 int t=0;
-extern const int T=30;
+extern const int T=40;
 
 extern int d=5;
 extern int m=5;
 extern int n=5;
 
-extern const VectorXd Ux0 = 2.0		*VectorXd::Constant(d, 1.0);
-extern const VectorXd Lx0 = -2.0	*VectorXd::Constant(d, 1.0);
-extern const VectorXd Uy0 = 2.0		*VectorXd::Constant(m, 1.0);
-extern const VectorXd Ly0 = -2.0	*VectorXd::Constant(m, 1.0);
+extern VectorXd Ux0 = 2.0	*VectorXd::Constant(d, 1.0);
+extern VectorXd Lx0 = -2.0	*VectorXd::Constant(d, 1.0);
+extern VectorXd Uy0 = 2.0	*VectorXd::Constant(m, 1.0);
+extern VectorXd Ly0 = -2.0	*VectorXd::Constant(m, 1.0);
 
 extern const double alp0 = 1.0;
 extern const double eps_alp = 1.0e-10;
@@ -28,7 +28,7 @@ extern const double eps_bfgs = 1.0e-2;
 extern const int    ite_sdm = 100000;
 extern const double eps_sdm = 1.0e-2;
 
-extern const int num_of_start = 50;
+extern const int num_of_start = 40;
 
 extern       double mean=0;
 extern const double sigma_thre = 1.0e-10;
@@ -70,4 +70,5 @@ extern clock_t finding_time_BC   = 0;
 extern clock_t finding_time_lsBO = 0;
 
 extern const int  select = 0;			// select = 0のときsevの値を返す
-extern const bool bfgs_or_rand = true;	// trueならbfgsを，falseならbound_rand用いる
+extern       bool BO_or_lsBO = true;	// アルゴリズムの切り替え
+extern       bool SDMorBFGS = true;		// argmaxの切り替え（SDM⇔BFGS）

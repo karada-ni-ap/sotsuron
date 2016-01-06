@@ -14,17 +14,30 @@ using namespace Eigen;
 
 int main(void)
 {	
-	double maxf_of_each_d[5];
+	double maxf_of_each_d[15];
 
-	for (d = 1; d <= 5; d++){
+	BO_or_lsBO = false;		// true¨BO  / false¨lsBO
+	SDMorBFGS = true;		// true¨SDM / false¨BFGS
+
+	for (d = 7; d <= 15; d++){
 		initA();
 		initialize_for_BO();
-		BO();
-		maxf_of_each_d[d - 1] = maxf_BO;
+
+		if (BO_or_lsBO){
+			BO();
+			maxf_of_each_d[d - 1] = maxf_BO;
+		}
+
+		else{
+			lsBO();
+			maxf_of_each_d[d - 1] = maxf_lsBO;
+		}
+
+		deleting_for_BO();
 	}
 
-	for (int i = 0; i < 5; i++){
-		cout << "d=" << i + 1 << " : " << maxf_of_each_d[i] << endl;
+	for (int i = 1; i <= 15; i++){
+		cout << "d=" << i << " : " << maxf_of_each_d[i-1] << endl;
 	}
 
 	return 0;

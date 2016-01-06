@@ -8,6 +8,10 @@ using namespace std;
 using namespace Eigen;
 
 void initA(){
+	A = new MatrixXd*[d + 1];
+	B = new MatrixXd[m + 1];
+	C = new MatrixXd[d + 1];
+
 	for (int i = 0; i < (d+1); i++)
 		A[i] = new MatrixXd[m+1];
 
@@ -160,7 +164,7 @@ pair<double, VectorXd> local_search(VectorXd x0, VectorXd y0){
 		Y = sev_x(x, y, Uy0, Ly0);
 		y = Y.second;
 		
-		X = sev_y(y, x, Ux0, Ly0);
+		X = sev_y(y, x, Ux0, Lx0);
 		x = X.second;
 
 		pre = tmp;

@@ -15,10 +15,10 @@ extern int d; // xの次元
 extern int m; // yの次元
 extern int n; // 対称行列のサイズ
 
-extern const VectorXd Ux0;
-extern const VectorXd Lx0;
-extern const VectorXd Uy0;
-extern const VectorXd Ly0;
+extern VectorXd Ux0;
+extern VectorXd Lx0;
+extern VectorXd Uy0;
+extern VectorXd Ly0;
 
 extern const double alp0;	// バックトラック法のαの初期値
 extern const double eps_alp;// バックトラック法のαのbreak条件
@@ -76,4 +76,5 @@ extern clock_t finding_time_BC;
 extern clock_t finding_time_lsBO;
 
 extern const int  select;		// 目的関数の切り替え
-extern const bool bfgs_or_rand;	// argmaxの切り替え（BFGS⇔ランダム）
+extern       bool BO_or_lsBO;	// アルゴリズムの切り替え
+extern       bool SDMorBFGS;	// argmaxの切り替え（SDM⇔BFGS）

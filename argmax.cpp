@@ -50,6 +50,7 @@ double back_track(VectorXd X, VectorXd Grad, VectorXd dir){
 			else
 				alp *= rho;
 		}
+		//cout << "alp : " << alp << endl;
 		return alp;
 	}
 }
@@ -78,6 +79,9 @@ VectorXd bfgs(VectorXd x0){
 
 		Xold = Xnew;
 		Xnew = projection(Xold + alp*dir, Ux0, Lx0);
+		
+		//cout << "alp : " << alp << endl;
+		//cout << Xnew.transpose() << endl;
 
 		if ((Xnew - Xold).norm() < eps_bfgs){
 			//cout << "境界でbreak" << endl;
@@ -129,11 +133,9 @@ VectorXd sdm(VectorXd x0){
 }
 
 VectorXd argmax_u(){
-	if (t == 0) //初期点はランダム
+	if (t == 0){ //初期点はランダム
 		return bound_rand();
-
-	else if (!bfgs_or_rand) // Debug用
-		return bound_rand();
+	}
 
 	else{
 		//ここでuの最大化を行う
@@ -143,8 +145,10 @@ VectorXd argmax_u(){
 		VectorXd Xtmp = VectorXd::Zero(d);
 
 		for (int i = 0; i < num_of_start; i++){	
-			//Xtmp = sdm(bound_rand());
-			Xtmp = bfgs(bound_rand());
+			if (SDMorBFGS)
+				Xtmp = sdm(bound_rand());
+			else
+				Xtmp = bfgs(bound_rand());
 			
 			utmp = u(Xtmp);
 			if (utmp > opt){
