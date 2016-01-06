@@ -6,8 +6,8 @@ extern		 int t=0;
 extern const int T=40;
 
 extern int d=5;
-extern int m=5;
-extern int n=5;
+extern int m=10;
+extern int n=15;
 
 extern VectorXd Ux0 = 2.0	*VectorXd::Constant(d, 1.0);
 extern VectorXd Lx0 = -2.0	*VectorXd::Constant(d, 1.0);
@@ -32,7 +32,7 @@ extern const int num_of_start = 40;
 
 extern       double mean=0;
 extern const double sigma_thre = 1.0e-10;
-extern const double xi = 0.0;
+extern const double xi = 2.0;
 
 extern double maxf_BO   = -Inf;
 extern double maxf_lsBO = -Inf;
@@ -58,7 +58,7 @@ extern const double eps_local = 1.0e-2;
 extern const int    ite_relax = 100000;
 extern const double eps_relax = 1.0e-2;
 
-extern const int    ite_bc = 60;
+extern const int    ite_bc = 20;
 extern const double eps_bc = 1.0e-2;
 
 extern int t_find = 0;

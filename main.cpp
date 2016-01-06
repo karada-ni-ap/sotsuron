@@ -8,6 +8,7 @@
 #include "argmax.h"
 #include "debug.h"
 #include "sev.h"
+#include "branch_and_cut.h"
 
 using namespace std;
 using namespace Eigen;
@@ -15,29 +16,37 @@ using namespace Eigen;
 int main(void)
 {	
 	double maxf_of_each_d[15];
+	int    find_of_each_d[15];
 
-	BO_or_lsBO = false;		// trueÅ®BO  / falseÅ®lsBO
-	SDMorBFGS = true;		// trueÅ®SDM / falseÅ®BFGS
+	clock_t finding_time_of_each_d[15];
+	clock_t time_of_each_d[15];
 
-	for (d = 7; d <= 15; d++){
+	clock_t start;
+	clock_t end;
+
+	SDMorBFGS = false;		// trueÅ®SDM / falseÅ®BFGS
+
+	for (d = 5; d <= 15; d++){
 		initA();
 		initialize_for_BO();
 
-		if (BO_or_lsBO){
-			BO();
-			maxf_of_each_d[d - 1] = maxf_BO;
-		}
+		start = clock();
+		maxf_of_each_d[d - 1] = branch_and_cut();
+		end = clock();
 
-		else{
-			lsBO();
-			maxf_of_each_d[d - 1] = maxf_lsBO;
-		}
+		finding_time_of_each_d[d-1]		= end - finding_time_BC;
+		time_of_each_d[d-1]				= end - start;
+		find_of_each_d[d-1]				= k_find;
 
 		deleting_for_BO();
 	}
 
-	for (int i = 1; i <= 15; i++){
+	for (int i = 5; i <= 15; i++){
 		cout << "d=" << i << " : " << maxf_of_each_d[i-1] << endl;
+		cout << "time : " << time_of_each_d[i - 1] << endl;
+		cout << "find : " << finding_time_of_each_d[i - 1] << endl;
+		cout << "find : " << find_of_each_d[i - 1] << endl;
+		
 	}
 
 	return 0;

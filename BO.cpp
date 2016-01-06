@@ -162,6 +162,111 @@ pair<double, VectorXd> BO(){
 
 pair<double, VectorXd> lsBO(){
 	VectorXd x_next = VectorXd::Zero(d);
+	VectorXd x_lo = VectorXd::Zero(d);
+	VectorXd x_opt = VectorXd::Zero(d);
+
+	pair<double, VectorXd> Pair_next;
+	pair<double, VectorXd> Pair_lo;
+
+	int mode = 0;
+	// 0 : argmax
+	// 1 : local search
+	// 2 : oppsite sampling
+
+	bool incomp = true;
+
+	for (t = 0; t < T; t++){
+		//【tはこの時点におけるデータセットのサイズ】//
+		update_m();
+		incomp = true;
+
+		cout << "-------------------------------------" << endl;
+		cout << "t : " << t << endl;
+
+		if (mode == 0 && incomp){
+			cout << "mode 0" << endl;
+
+			x_next = argmax_u();
+
+			Pair_next = sev_x(x_next, (Uy0 + Ly0) / 2, Uy0, Ly0); // Pair_next = <f(x_next), y0>
+			f(t) = Pair_next.first;
+			D_q.col(t) = x_next;
+
+			cout << x_next.transpose() << endl;
+			cout << f(t) << endl;
+
+			if (f(t)>maxf_lsBO){
+				mode = 1;
+
+				x_opt = x_next;
+				maxf_lsBO = f(t);
+				l_find = t;
+				finding_time_lsBO = clock();
+			}
+
+			update_K(x_next);
+			incomp = false;
+		}
+
+		else if (mode == 1 && incomp){
+			cout << "mode 1" << endl;
+
+			Pair_lo = local_search(x_next, Pair_next.second); // Pair_lo = <f(x_lo), x_lo>
+			x_lo = Pair_lo.second;
+
+			f(t) = Pair_lo.first;
+			D_q.col(t) = x_lo;
+
+			cout << x_lo.transpose() << endl;
+			cout << f(t) << endl;
+
+
+			mode = 2;
+
+			x_opt = x_lo;
+			maxf_lsBO = f(t);
+			l_find = t;
+			finding_time_lsBO = clock();
+
+			update_K(x_lo);
+			incomp = false;
+		}
+
+		else if (incomp){
+			cout << "mode 2" << endl;
+
+			x_next = 2 * x_lo - x_next; //x_loを挟んで反対側の点
+			x_next = projection(x_next, Ux0, Lx0);
+
+			Pair_next = sev_x(x_next, (Uy0 + Ly0) / 2, Uy0, Ly0); // Pair_next = <f(x_next), y0>
+			f(t) = Pair_next.first;
+			D_q.col(t) = x_next;
+
+			cout << x_next.transpose() << endl;
+			cout << f(t) << endl;
+
+			mode = 0;
+
+			if (f(t) > maxf_lsBO){ //偶然最適値を更新したとき
+				mode = 1;
+
+				x_opt = x_next;
+				maxf_lsBO = f(t);
+				l_find = t;
+				finding_time_lsBO = clock();
+			}
+
+			update_K(x_next);
+			incomp = false;
+		}
+	}
+
+	return make_pair(maxf_lsBO, x_opt);
+}
+
+/*
+pair<double, VectorXd> lsBO(){
+	VectorXd x_next = VectorXd::Zero(d);
 	VectorXd x_lo   = VectorXd::Zero(d);
 
 	pair<double, VectorXd> Pair_next;
@@ -228,6 +333,7 @@ pair<double, VectorXd> lsBO(){
 
 	return make_pair(maxf_lsBO, x_lo);
 }
+*/
 
 void initialize_for_BO(){
 	t = 0;
