@@ -128,20 +128,22 @@ VectorXd u_over_x(VectorXd x){
 		return k_over_x(x)*u_over_k(x);
 }
 
-pair<double, VectorXd> BO(){
+pair<double, VectorXd> BO(clock_t* sample_time, double* sample_val){
 	VectorXd x_next = VectorXd::Zero(d);
 	VectorXd x_opt  = VectorXd::Zero(d);
+
+	clock_t start = clock();
 
 	for (t = 0; t < T; t++){
 		//【tはこの時点におけるデータセットのサイズ】//
 
 		update_m();
 		x_next = argmax_u();
-		debug_inside(x_next, x_opt);
+
+		//debug_inside(x_next, x_opt);
 
 		//データセットの更新
 		D_q.col(t) = x_next;
-
 		f(t) = sev_x(x_next, (Uy0 + Ly0) / 2, Uy0, Ly0).first;
 
 		if (f(t)>maxf_BO){
@@ -153,6 +155,9 @@ pair<double, VectorXd> BO(){
 		}
 		//【この時点でデータセットのサイズはt+1】//
 
+		sample_time[t] = clock() - start;
+		sample_val[t]  = maxf_BO;
+
 		update_K(x_next);
 		//【updateが行われた後，Kのサイズはt+1】//
 	}
@@ -160,6 +165,7 @@ pair<double, VectorXd> BO(){
 	return make_pair(maxf_BO, x_opt);
 }
 
+/*
 pair<double, VectorXd> lsBO(){
 	VectorXd x_next = VectorXd::Zero(d);
 	VectorXd x_lo = VectorXd::Zero(d);
@@ -263,77 +269,53 @@ pair<double, VectorXd> lsBO(){
 
 	return make_pair(maxf_lsBO, x_opt);
 }
+*/
 
-/*
+
 pair<double, VectorXd> lsBO(){
 	VectorXd x_next = VectorXd::Zero(d);
-	VectorXd x_lo   = VectorXd::Zero(d);
-
-	pair<double, VectorXd> Pair_next;
-	pair<double, VectorXd> Pair_lo;
+	VectorXd x_opt = VectorXd::Zero(d);
+	
+	pair<double, VectorXd> Pair;
+	pair<double, VectorXd> loPair;
 
 	for (t = 0; t < T; t++){
-		cout << "t : " << t << endl;
 		//【tはこの時点におけるデータセットのサイズ】//
 
 		update_m();
-
-		cout << "x_next" << endl;
-
 		x_next = argmax_u();
+		debug_inside(x_next, x_opt);
 
-		Pair_next = sev_x(x_next, (Uy0 + Ly0) / 2, Uy0, Ly0); // Pair_next = <f(x_next), y0>
+		//データセットの更新
+		Pair = sev_x(x_next, (Uy0 + Ly0) / 2, Uy0, Ly0); // <値, y*>
 
-		f(t) = Pair_next.first;
-		D_q.col(t) = x_next;
-		update_K(x_next);
-
-		if (f(t)>maxf_lsBO){
-			t++;
-			if (t == T){
-				l_find = t;
-				maxf_lsBO = f(T - 1);
-				break;
-			}
-
+		if (Pair.first > maxf_lsBO){
 			cout << "local search" << endl;
 
-			Pair_lo = local_search(x_next, Pair_next.second); // Pair_lo = <f(x_lo), x_lo>
-			x_lo = Pair_lo.second;
+			loPair = local_search(x_next, Pair.second); // <局所最適値, x*>
+			x_opt = loPair.second;
 
-			f(t) = Pair_lo.first;
-			D_q.col(t) = x_lo;
-			update_K(x_lo);
+			f(t) = loPair.first;
+			D_q.col(t) = x_opt;
 
-			maxf_lsBO = f(t);
+			update_K(x_opt);
+
+			maxf_lsBO = loPair.first;
 			l_find = t;
 			finding_time_lsBO = clock();
-
-			t++;
-			if (t == T) break;
-
-			cout << "opposite sampling" << endl;
-
-			x_next = 2 * x_lo - x_next; //x_loを挟んで反対側の点
-			x_next = projection(x_next, Ux0, Lx0);
-			Pair_next = sev_x(x_next, (Uy0 + Ly0) / 2, Uy0, Ly0);
-			
-			f(t) = Pair_next.first;
-			if (f(t) > maxf_lsBO){
-				maxf_lsBO = f(t);
-				l_find = t;
-			}
-			D_q.col(t) = x_next;
-			update_K(x_next);
 		}
 
-		cout << "-----------------------------------" << endl;
+		else{
+			D_q.col(t) = x_next;
+			f(t) = Pair.first;
 
+			update_K(x_next);
+		}
+		//【この時点でデータセットのサイズはt+1】//
 	}
 
-	return make_pair(maxf_lsBO, x_lo);
+	return make_pair(maxf_lsBO, x_opt);
 }
-*/
 
 void initialize_for_BO(){
 	t = 0;

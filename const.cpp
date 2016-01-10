@@ -3,11 +3,11 @@
 extern const int Inf = 100000;
 
 extern		 int t=0;
-extern const int T=40;
+extern const int T=10;
 
 extern int d=5;
 extern int m=10;
-extern int n=15;
+extern int n=5;
 
 extern VectorXd Ux0 = 2.0	*VectorXd::Constant(d, 1.0);
 extern VectorXd Lx0 = -2.0	*VectorXd::Constant(d, 1.0);

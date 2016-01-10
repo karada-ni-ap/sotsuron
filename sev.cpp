@@ -17,8 +17,12 @@ void initA(){
 
 	for (int i = 0; i < (d + 1); i++){
 		for (int j = 0; j < (m + 1); j++){
-			MatrixXd tmp = MatrixXd::Random(n, n);
-			A[i][j] = 0.5*(tmp + tmp.transpose());
+			// MatrixXd tmp = MatrixXd::Random(n, n);
+			// A[i][j] = 0.5*(tmp + tmp.transpose()); // ‚±‚ê‚¾‚Æˆê—l•ª•z‚É‚È‚ç‚È‚¢
+			A[i][j] = MatrixXd::Random(n, n);
+			for (int k = 1; k <= n - 1; k++)
+				for (int l = 0; l <= n - 2; l++)
+					A[i][j](k, l) = A[i][j](l, k);
 		}
 	}
 
