@@ -47,8 +47,6 @@ extern MatrixXd** A = new MatrixXd*[d + 1];
 extern MatrixXd*  B = new MatrixXd [m + 1];
 extern MatrixXd*  C = new MatrixXd [d + 1];
 
-extern const double beta = 8.0;
-
 extern const int    ite_sev = 100000;
 extern const double eps_sev = 1.0e-2;
 

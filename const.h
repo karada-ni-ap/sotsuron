@@ -53,8 +53,6 @@ extern MatrixXd** A; //入力行列
 extern MatrixXd*  B; //iについてのsum
 extern MatrixXd*  C; //jについてのsum
 
-extern const double beta; //劣勾配法のステップサイズ(alp0 := norm / beta)
-
 extern const int    ite_sev; //劣勾配法の反復回数
 extern const double eps_sev; //劣勾配法のε
 
