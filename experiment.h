@@ -14,3 +14,4 @@ using namespace std;
 using namespace Eigen;
 
 void vs_BO(int d_, int m_, int n_);
+void vs_lsBO(int d_, int m_, int n_);

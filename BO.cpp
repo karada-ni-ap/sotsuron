@@ -140,7 +140,7 @@ pair<double, VectorXd> BO(clock_t* sample_time, double* sample_val){
 		update_m();
 		x_next = argmax_u();
 
-		//debug_inside(x_next, x_opt);
+		debug_inside(x_next, x_opt);
 
 		//データセットの更新
 		D_q.col(t) = x_next;
@@ -272,19 +272,22 @@ pair<double, VectorXd> lsBO(){
 */
 
 
-pair<double, VectorXd> lsBO(){
+pair<double, VectorXd> lsBO(clock_t* sample_time, double* sample_val){
 	VectorXd x_next = VectorXd::Zero(d);
 	VectorXd x_opt = VectorXd::Zero(d);
 	
 	pair<double, VectorXd> Pair;
 	pair<double, VectorXd> loPair;
 
+	clock_t start = clock();
+
 	for (t = 0; t < T; t++){
 		//【tはこの時点におけるデータセットのサイズ】//
 
 		update_m();
 		x_next = argmax_u();
-		debug_inside(x_next, x_opt);
+
+		cout << x_next.transpose() << endl;
 
 		//データセットの更新
 		Pair = sev_x(x_next, (Uy0 + Ly0) / 2, Uy0, Ly0); // <値, y*>
@@ -306,12 +309,14 @@ pair<double, VectorXd> lsBO(){
 		}
 
 		else{
-			D_q.col(t) = x_next;
 			f(t) = Pair.first;
+			D_q.col(t) = x_next;
 
 			update_K(x_next);
 		}
-		//【この時点でデータセットのサイズはt+1】//
+
+		sample_time[t] = clock() - start;
+		sample_val[t] = maxf_lsBO;
 	}
 
 	return make_pair(maxf_lsBO, x_opt);

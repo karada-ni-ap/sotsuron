@@ -13,13 +13,14 @@
 using namespace std;
 using namespace Eigen;
 
-int main(void)
-{
-	for (int d_ = 5; d_ <= 7; d_++){
-		for (int m_ = 10; m_ <= 11; m_++){
-			for (int n_ = 10; n_ <= 10; n_++){
+int main(void){
+
+	for (int d_ = 4; d_ <= 4; d_++){
+		for (int m_ = 8; m_ <= 8; m_++){
+			for (int n_ = 12; n_ <= 12; n_++){
 				cout << "d : " << d_ << ", m : " << m_ << ", n : " << n_ << endl;
-				vs_BO(d_, m_, n_);
+				//vs_BO(d_, m_, n_);
+				vs_lsBO(d_, m_, n_);
 				cout << "----------------------------------------------" << endl;
 			}
 		}

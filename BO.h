@@ -13,7 +13,7 @@ MatrixXd k_over_x(VectorXd x);
 VectorXd u_over_x(VectorXd x);
 
 pair<double, VectorXd> BO(clock_t* sample_time, double* sample_val);
-pair<double, VectorXd> lsBO();
+pair<double, VectorXd> lsBO(clock_t* sample_time, double* sample_val);
 
 void initialize_for_BO();
 void deleting_for_BO();

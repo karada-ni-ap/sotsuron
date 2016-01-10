@@ -12,10 +12,10 @@ using namespace std;
 using namespace Eigen;
 
 void debug_inside(VectorXd x_next, VectorXd x_opt){ //tはデータセットのサイズ
-		cout << "t is " << t << endl;
+		//cout << "t is " << t << endl;
 		cout << x_next.transpose() << endl;
 		
-		cout << "-----------------------------------------------" << endl;
+		//cout << "-----------------------------------------------" << endl;
 }
 
 void debug_last(){
