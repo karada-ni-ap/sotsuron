@@ -3,10 +3,8 @@
 #include <time.h>
 #include "const.h"
 #include "myfunc.h"
-#include "obj.h"
 #include "sev.h"
 #include "argmax.h"
-#include "debug.h"
 #include "local_and_relax.h"
 
 using namespace std;
@@ -140,7 +138,7 @@ pair<double, VectorXd> BO(clock_t* sample_time, double* sample_val){
 		update_m();
 		x_next = argmax_u();
 
-		debug_inside(x_next, x_opt);
+		cout << x_next.transpose() << endl;
 
 		//データセットの更新
 		D_q.col(t) = x_next;
@@ -148,10 +146,7 @@ pair<double, VectorXd> BO(clock_t* sample_time, double* sample_val){
 
 		if (f(t)>maxf_BO){
 			x_opt = x_next;
-
 			maxf_BO = f(t);
-			t_find = t;
-			finding_time_BO = clock();
 		}
 		//【この時点でデータセットのサイズはt+1】//
 
@@ -206,8 +201,6 @@ pair<double, VectorXd> lsBO(){
 
 				x_opt = x_next;
 				maxf_lsBO = f(t);
-				l_find = t;
-				finding_time_lsBO = clock();
 			}
 
 			update_K(x_next);
@@ -231,8 +224,6 @@ pair<double, VectorXd> lsBO(){
 
 			x_opt = x_lo;
 			maxf_lsBO = f(t);
-			l_find = t;
-			finding_time_lsBO = clock();
 
 			update_K(x_lo);
 			incomp = false;
@@ -258,8 +249,6 @@ pair<double, VectorXd> lsBO(){
 
 				x_opt = x_next;
 				maxf_lsBO = f(t);
-				l_find = t;
-				finding_time_lsBO = clock();
 			}
 
 			update_K(x_next);
@@ -270,7 +259,6 @@ pair<double, VectorXd> lsBO(){
 	return make_pair(maxf_lsBO, x_opt);
 }
 */
-
 
 pair<double, VectorXd> lsBO(clock_t* sample_time, double* sample_val){
 	VectorXd x_next = VectorXd::Zero(d);
@@ -298,14 +286,12 @@ pair<double, VectorXd> lsBO(clock_t* sample_time, double* sample_val){
 			loPair = local_search(x_next, Pair.second); // <局所最適値, x*>
 			x_opt = loPair.second;
 
+			maxf_lsBO = loPair.first;
+
 			f(t) = loPair.first;
 			D_q.col(t) = x_opt;
 
 			update_K(x_opt);
-
-			maxf_lsBO = loPair.first;
-			l_find = t;
-			finding_time_lsBO = clock();
 		}
 
 		else{

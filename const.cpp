@@ -3,7 +3,7 @@
 extern const int Inf = 100000;
 
 extern		 int t=0;
-extern const int T=25;
+extern const int T=15;
 
 extern int d=5;
 extern int m=5;
@@ -61,14 +61,4 @@ extern const double eps_relax = 1.0e-2;
 extern const int    ite_bc = 20;
 extern const double eps_bc = 1.0e-2;
 
-extern int t_find = 0;
-extern int l_find = 0;
-extern int k_find = 0;
-
-extern clock_t finding_time_BO   = 0;
-extern clock_t finding_time_BC   = 0;
-extern clock_t finding_time_lsBO = 0;
-
-extern const int  select = 0;			// select = 0のときsevの値を返す
-extern       bool BO_or_lsBO = true;	// アルゴリズムの切り替え
 extern       bool SDMorBFGS = true;		// argmaxの切り替え（SDM⇔BFGS）

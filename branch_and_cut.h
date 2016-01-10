@@ -47,4 +47,4 @@ public:
 	double maxL();
 };
 
-double branch_and_cut();
+double branch_and_cut(clock_t* sample_time, double* sample_val);

@@ -4,9 +4,7 @@
 #include "const.h"
 #include "BO.h"
 #include "myfunc.h"
-#include "obj.h"
 #include "argmax.h"
-#include "debug.h"
 #include "sev.h"
 #include "branch_and_cut.h"
 

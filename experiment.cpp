@@ -15,7 +15,7 @@ void vs_BO(int d_, int m_, int n_){
 	initialize_for_BO();
 
 	BO(sample_time_BO, sample_val_BO);
-	//branch_and_cut(sample_time_BC, sample_val_BC);
+	branch_and_cut(sample_time_BC, sample_val_BC);
 
 	deleting_for_BO();
 
@@ -30,20 +30,26 @@ void vs_lsBO(int d_, int m_, int n_){
 	n = m_;
 
 	clock_t* sample_time_lsBO = new clock_t[T];
-	clock_t* sample_time_BC = new clock_t[T];
+	clock_t* sample_time_BC = new clock_t[ite_bc];
 
 	double* sample_val_lsBO = new double[T];
-	double* sample_val_BC = new double[T];
+	double* sample_val_BC = new double[ite_bc];
 
 	initA();
 	initialize_for_BO();
 
 	lsBO(sample_time_lsBO, sample_val_lsBO);
-	//branch_and_cut(sample_time_BC, sample_val_BC);
+	branch_and_cut(sample_time_BC, sample_val_BC);
 
 	deleting_for_BO();
 
 	for (int i = 0; i < T; i++){
-		cout << sample_time_lsBO[i] << "  :  " << sample_val_lsBO[i] << endl;;
+		cout << sample_time_lsBO[i] << "  :  " << sample_val_lsBO[i] << endl;
+	}
+
+	cout << "------------------------------" << endl;
+
+	for (int i = 0; i < ite_bc; i++){
+		cout << sample_time_BC[i] << "  :  " << sample_val_BC[i] << endl;;
 	}
 }

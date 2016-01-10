@@ -1,3 +1,4 @@
+#include <time.h>
 #include "branch_and_cut.h"
 
 using namespace std;
@@ -154,7 +155,7 @@ double Qlist::maxL(){
 	return max;
 }
 
-double branch_and_cut(){
+double branch_and_cut(clock_t* sample_time, double* sample_val){
 	classQ Q0;
 	classQ Q, Qopt;
 	classQ Q12[2];
@@ -165,13 +166,14 @@ double branch_and_cut(){
 	Q0.calculate_lo();
 
 	Qopt = Q0;
-	finding_time_BC = clock();
 
 	double maxU = Q0.Q_U;
 	double maxL = Q0.Q_L;
 
 	Qlist List;
 	List.add(Q0);
+
+	clock_t start = clock();
 
 	for (int k = 0; k < ite_bc; k++){
 		cout << "k is " << k << endl;
@@ -191,21 +193,19 @@ double branch_and_cut(){
 				List.add(Q12[i]);
 				//cout << "Q" << i + 1 << " : " << Q12[i].Q_U << " > " << Q12[i].Q_L << endl;
 
-				cout << Q12[i].Ux.transpose() << endl;
-				cout << Q12[i].Lx.transpose() << endl;
-				cout << Q12[i].Uy.transpose() << endl;
-				cout << Q12[i].Ly.transpose() << endl;
+				//cout << Q12[i].Ux.transpose() << endl;
+				//cout << Q12[i].Lx.transpose() << endl;
+				//cout << Q12[i].Uy.transpose() << endl;
+				//cout << Q12[i].Ly.transpose() << endl;
 
 				if (Q12[i].Q_L > Q12[i].Q_U)
-					cout << "L > U X-<" << endl;
+					cout << "L > U (;_;)" << endl;
 
 				if (Q12[i].Q_L > maxL)
 					maxL = Q12[i].Q_L;
 
 				if (Q12[i].Q_L > Qopt.Q_L){
 					Qopt = Q12[i];
-					k_find = k;
-					finding_time_BC = clock();
 					cout << "Qopt is updated." << endl;
 				}
 			}
@@ -217,6 +217,9 @@ double branch_and_cut(){
 			cout << "Q having maxL has been deleted..." << endl;
 			maxL = List.maxL();
 		}
+
+		sample_time[k] = clock() - start;
+		sample_val[k] = maxL;
 
 		maxU = List.root.next->Q_U;
 

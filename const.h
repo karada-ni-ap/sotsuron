@@ -67,14 +67,4 @@ extern const double eps_relax; //緩和問題のε
 extern const int    ite_bc;	//分枝限定法の反復回数
 extern const double eps_bc; //分枝限定法のε
 
-extern int t_find; // BO  において最大値を探索したときの反復回数
-extern int l_find; // lsBOにおいて最大値を探索したときの反復回数
-extern int k_find; // BC  において最大値を探索したときの反復回数
-
-extern clock_t finding_time_BO;
-extern clock_t finding_time_BC;
-extern clock_t finding_time_lsBO;
-
-extern const int  select;		// 目的関数の切り替え
-extern       bool BO_or_lsBO;	// アルゴリズムの切り替え
 extern       bool SDMorBFGS;	// argmaxの切り替え（SDM⇔BFGS）
