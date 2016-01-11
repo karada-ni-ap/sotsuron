@@ -3,7 +3,7 @@
 extern const int Inf = 100000;
 
 extern		 int t=0;
-extern const int T=15;
+extern const int T=70;
 
 extern int d=5;
 extern int m=5;
@@ -56,8 +56,7 @@ extern const double eps_local = 1.0e-2;
 extern const int    ite_relax = 100000;
 extern const double eps_relax = 1.0e-2;
 
-extern const int    ite_bc = 10;
+extern const int    ite_bc = 50;
 extern const double eps_bc = 1.0e-2;
-
 
 extern       bool SDMorBFGS = true;		// argmax‚ÌØ‚è‘Ö‚¦iSDMÌBFGSj

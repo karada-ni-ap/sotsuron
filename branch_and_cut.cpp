@@ -219,7 +219,7 @@ double branch_and_cut(clock_t* sample_time, double* sample_val){
 		}
 
 		sample_time[k] = clock() - start;
-		sample_val[k] = maxL;
+		sample_val[k] = Qopt.Q_L;
 
 		maxU = List.root.next->Q_U;
 
