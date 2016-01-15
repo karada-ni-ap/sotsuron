@@ -272,10 +272,10 @@ pair<double, VectorXd> lsBO(clock_t* sample_time, double* sample_val){
 	for (t = 0; t < T; t++){
 		//【tはこの時点におけるデータセットのサイズ】//
 
-		update_m();
-		x_next = argmax_u();
+		//はじめにlocal searchをするのでmeanが実際より大きい値をとってしまう
+		//update_m();
 
-		cout << x_next.transpose() << endl;
+		x_next = argmax_u();
 
 		//データセットの更新
 		Pair = sev_x(x_next, (Uy0 + Ly0) / 2, Uy0, Ly0); // <値, y*>
@@ -286,6 +286,8 @@ pair<double, VectorXd> lsBO(clock_t* sample_time, double* sample_val){
 			loPair = local_search(x_next, Pair.second); // <局所最適値, x*>
 			x_opt = loPair.second;
 
+			cout << x_opt.transpose() << endl;
+
 			maxf_lsBO = loPair.first;
 
 			f(t) = loPair.first;
@@ -295,6 +297,8 @@ pair<double, VectorXd> lsBO(clock_t* sample_time, double* sample_val){
 		}
 
 		else{
+			cout << x_next.transpose() << endl;
+
 			f(t) = Pair.first;
 			D_q.col(t) = x_next;
 

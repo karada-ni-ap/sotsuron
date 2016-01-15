@@ -22,17 +22,17 @@ extern const double c2 = 0.8;
 
 extern const double eps_y = 1.0e-3;
 
-extern const int    ite_bfgs = 100000;
+extern const int    ite_bfgs = 10000;
 extern const double eps_bfgs = 1.0e-2;
 
-extern const int    ite_sdm = 100000;
+extern const int    ite_sdm = 10000;
 extern const double eps_sdm = 1.0e-2;
 
 extern const int num_of_start = 40;
 
 extern       double mean=0;
 extern const double sigma_thre = 1.0e-10;
-extern const double xi = 2.0;
+extern const double xi = 5.0;
 
 extern double maxf_BO   = -Inf;
 extern double maxf_lsBO = -Inf;
@@ -47,13 +47,13 @@ extern MatrixXd** A = new MatrixXd*[d + 1];
 extern MatrixXd*  B = new MatrixXd [m + 1];
 extern MatrixXd*  C = new MatrixXd [d + 1];
 
-extern const int    ite_sev = 100000;
+extern const int    ite_sev = 10000;
 extern const double eps_sev = 1.0e-2;
 
-extern const int    ite_local = 100000;
-extern const double eps_local = 1.0e-2;
+extern const int    ite_local = 10000;
+extern const double eps_local = 5.0e-3;
 
-extern const int    ite_relax = 100000;
+extern const int    ite_relax = 10000;
 extern const double eps_relax = 1.0e-2;
 
 extern const int    ite_bc = 50;

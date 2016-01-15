@@ -162,7 +162,7 @@ pair<double, VectorXd> local_search(VectorXd x0, VectorXd y0){
 
 	double tmp = 0;
 	double pre = 0;
-	double max = -Inf;
+	//double max = -Inf;
 
 	for (int k = 0; k < ite_local; k++){
 		Y = sev_x(x, y, Uy0, Ly0);
@@ -174,12 +174,12 @@ pair<double, VectorXd> local_search(VectorXd x0, VectorXd y0){
 		pre = tmp;
 		tmp = X.first;
 
-		max = tmp>max ? tmp : max;
+		//max = tmp>max ? tmp : max;
 
 		//Žû‘©”»’è
 		if (abs(tmp - pre) < eps_local)
 			break;
 	}
 
-	return make_pair(max, x); //‹ÇŠÅ“K‰ð(x*, y*)‚Ìx*‚ð•Ô‚·
+	return make_pair(tmp, x); //‹ÇŠÅ“K‰ð(x*, y*)‚Ìx*‚ð•Ô‚·
 }
