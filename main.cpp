@@ -12,16 +12,16 @@ using namespace std;
 using namespace Eigen;
 
 int main(void){
-	int dmin = 7;
-	int dmax = 7;
+	int dmin = 5;
+	int dmax = 5;
 	
-	int mmin = 15;
-	int mmax = 15;
+	int mmin = 10;
+	int mmax = 10;
 
-	int nmin = 20;
-	int nmax = 20;
+	int nmin = 15;
+	int nmax = 15;
 
-	int num = 20;
+	int num = 5;
 
 
 	for (int d_ = dmin; d_ <= dmax; d_++){

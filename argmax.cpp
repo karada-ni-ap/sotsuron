@@ -3,14 +3,14 @@
 MatrixXd update_H(MatrixXd H, VectorXd s, VectorXd y){
 	double yts = y.dot(s);
 	
-	if (y.norm() < eps_y){
+	if (y.norm() < eps_H){
 		// |y| << 1
 		return MatrixXd::Identity(d, d);
 	}
 
 	else if (yts <= 0){
 		// <y,s> <= 0
-		//³’è’l‚ª”j‚ê‚é‰Â”\«‚ ‚è
+		//³’è’l«‚ª”j‚ê‚é‰Â”\«‚ ‚è
 		return MatrixXd::Identity(d, d);
 	}
 

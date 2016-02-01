@@ -26,7 +26,7 @@ extern const double rho;	// バックトラック法のρ
 extern const double c1;		// バックトラック法のc1
 extern const double c2;		// バックトラック法のc2
 
-extern const double eps_y; // H公式のε
+extern const double eps_H; // H公式のε
 
 extern const int    ite_bfgs;	 // BFGSの反復回数
 extern const double eps_bfgs;	 // BFGSの収束判定の閾値
