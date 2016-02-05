@@ -22,9 +22,9 @@ void vs_BO(int d_, int m_, int n_, int num){
 	ofstream out;
 	out.open(s, ios::trunc);
 
-	out << d << ", " << m << ", " << n << endl;
-	out << T << ", " << ite_bc << endl;
-	out << xi << endl;
+	out << d  << ", " << m << ", " << n << endl;
+	out << T  << ", " << ite_bc << endl;
+	out << xi << ", " << theta << endl;
 
 	for (int num_ = 1; num_ <= num; num_++){
 		initA();
@@ -83,7 +83,7 @@ void vs_lsBO(int d_, int m_, int n_, int num){
 
 	out << d << ", " << m << ", " << n << endl;
 	out << T << ", " << ite_bc << endl;
-	out << xi << endl;
+	out << xi << ", " << theta << ", " << kappa << endl;
 
 	for (int num_ = 1; num_ <= num; num_++){
 		initA();

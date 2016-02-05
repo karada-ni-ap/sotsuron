@@ -9,7 +9,7 @@ double cdf(double x){
 }
 
 double kernel(Eigen::VectorXd x1, Eigen::VectorXd x2){
-	return exp(-0.5 * (x1-x2).squaredNorm());
+	return exp( - (x1-x2).squaredNorm() / (2*theta*theta) );
 }
 
 VectorXd bound_rand(){

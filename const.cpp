@@ -3,16 +3,19 @@
 extern const int Inf = 100000;
 
 extern		 int t=0;
-extern const int T=50;
+extern const int T=30;
 
 extern int d=5;
 extern int m=5;
 extern int n=5;
 
-extern VectorXd Ux0 = 5.0	*VectorXd::Constant(d, 1.0);
-extern VectorXd Lx0 = -5.0	*VectorXd::Constant(d, 1.0);
-extern VectorXd Uy0 = 5.0	*VectorXd::Constant(m, 1.0);
-extern VectorXd Ly0 = -5.0	*VectorXd::Constant(m, 1.0);
+extern double theta = 10.0;
+extern double kappa =  5.0;
+
+extern VectorXd Ux0 = theta		*VectorXd::Constant(d, 1.0);
+extern VectorXd Lx0 = -theta	*VectorXd::Constant(d, 1.0);
+extern VectorXd Uy0 = theta		*VectorXd::Constant(m, 1.0);
+extern VectorXd Ly0 = -theta	*VectorXd::Constant(m, 1.0);
 
 extern const double alp0 = 1.0;
 extern const double eps_alp = 1.0e-10;
@@ -60,3 +63,4 @@ extern const int    ite_bc = 3;
 extern const double eps_bc = 1.0e-2;
 
 extern       bool SDMorBFGS = true;		// argmax‚ÌØ‚è‘Ö‚¦iSDMÌBFGSj
+extern       bool EIorUCB   = false;	// æ“¾ŠÖ”‚ÌØ‚è‘Ö‚¦ (EIÌUCB)

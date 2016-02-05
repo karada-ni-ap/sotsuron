@@ -12,16 +12,16 @@ using namespace std;
 using namespace Eigen;
 
 int main(void){
-	int dmin = 5;
-	int dmax = 5;
+	int dmin = 10;
+	int dmax = 10;
 	
-	int mmin = 10;
-	int mmax = 10;
+	int mmin = 15;
+	int mmax = 15;
 
-	int nmin = 15;
-	int nmax = 15;
+	int nmin = 10;
+	int nmax = 10;
 
-	int num = 5;
+	int num = 3;
 
 
 	for (int d_ = dmin; d_ <= dmax; d_++){
@@ -29,8 +29,8 @@ int main(void){
 			for (int n_ = nmin; n_ <= nmax; n_++){
 				cout << "d : " << d_ << ", m : " << m_ << ", n : " << n_ << endl;
 
-				vs_BO(d_, m_, n_, num);
-				//vs_lsBO(d_, m_, n_, num);
+				//vs_BO(d_, m_, n_, num);
+				vs_lsBO(d_, m_, n_, num);
 
 				cout << "----------------------------------------------" << endl;
 			}

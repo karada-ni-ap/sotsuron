@@ -17,9 +17,25 @@ void initA(){
 
 	for (int i = 0; i < (d + 1); i++){
 		for (int j = 0; j < (m + 1); j++){
+			/*
+			A[i][j] = MatrixXd::Zero(n, n);
+			
+			VectorXd tmp = VectorXd::Random(n);
+			int evenodd = (i + j) % 2;
+
+			for (int k = 0; k < n; k++){
+				if (evenodd == 0)
+					A[i][j](k, k) = abs(tmp(k));
+				else
+					A[i][j](k, k) = -abs(tmp(k));
+			}
+			*/
+			
+			
 			MatrixXd tmp = MatrixXd::Random(n, n);
 			A[i][j] = 0.5*(tmp + tmp.transpose()); // ‚±‚ê‚¾‚Æˆê—l•ª•z‚É‚È‚ç‚È‚¢
 			
+
 			/*
 			A[i][j] = MatrixXd::Random(n, n);
 			for (int k = 1; k <= n - 1; k++)

@@ -87,33 +87,59 @@ double sigma(Eigen::VectorXd x){
 double u(Eigen::VectorXd x){
 	double sigma_ = sigma(x);
 
-	if (sigma_ < sigma_thre)
-		return 0;
+	if (EIorUCB){
+		if (sigma_ < sigma_thre)
+			return 0;
+
+		else{
+			double mu_ = mu(x);
+			double gamma = (mu_ - maxf_BO - xi) / sigma_;
+			return (mu_ - maxf_BO - xi)*cdf(gamma) + sigma_*pdf(gamma);
+		}
+	}
 
 	else{
-		double mu_ = mu(x);
-		double gamma = (mu_ - maxf_BO - xi) / sigma_;
-		return (mu_ - maxf_BO - xi)*cdf(gamma) + sigma_*pdf(gamma);
+		return mu(x) + kappa * sigma_;
 	}
 }
 
 VectorXd u_over_k(VectorXd x){
-	double sigma_ = sigma(x);
-	double mu_ = mu(x);
-	double gamma = (mu_ - maxf_BO - xi) / sigma_;
 
-	VectorXd m1 = VectorXd::Constant(t,mean);
+	if (EIorUCB){
+		double sigma_ = sigma(x);
+		double mu_ = mu(x);
+		double gamma = (mu_ - maxf_BO - xi) / sigma_;
 
-	VectorXd v = VectorXd::Zero(t);
-	v = cdf(gamma)*(f.head(t) - m1.head(t)) - (pdf(gamma) / sigma_)*k(x);
+		VectorXd m1 = VectorXd::Constant(t, mean);
 
-	return Kinv.topLeftCorner(t, t)*v;
+		VectorXd v = VectorXd::Zero(t);
+		v = cdf(gamma)*(f.head(t) - m1.head(t)) - (pdf(gamma) / sigma_)*k(x);
+
+		return Kinv.topLeftCorner(t, t)*v;
+	}
+
+	else{
+		double sigma_ = sigma(x);
+		VectorXd v = VectorXd::Zero(t);
+
+		if (sigma_ >= sigma_thre){
+			VectorXd m1 = VectorXd::Constant(t, mean);
+
+			v = f.head(t) - m1 - (kappa / sigma_)*k(x);
+
+			return Kinv.topLeftCorner(t, t)*v;
+		}
+
+		else{
+			return v; // 0ベクトル
+		}
+	}
 }
 
 MatrixXd k_over_x(VectorXd x){
 	MatrixXd A = MatrixXd::Zero(d, t);
 	for (int j = 0; j < t; j++){
-		A.col(j) = kernel(D_q.col(j), x) * (D_q.col(j) - x);
+		A.col(j) = ( kernel(D_q.col(j), x) / (theta*theta) ) * (D_q.col(j) - x);
 	}
 	return A;
 }
@@ -272,8 +298,8 @@ pair<double, VectorXd> lsBO(clock_t* sample_time, double* sample_val){
 	for (t = 0; t < T; t++){
 		//【tはこの時点におけるデータセットのサイズ】//
 
-		//はじめにlocal searchをするのでmeanが実際より大きい値をとってしまう
-		//update_m();
+		//はじめにlocal searchをするのでmeanが実際より大きい値をとってしまう?
+		update_m();
 
 		x_next = argmax_u();
 

@@ -15,6 +15,9 @@ extern int d; // xの次元
 extern int m; // yの次元
 extern int n; // 対称行列のサイズ
 
+extern double theta; // Boxのサイズ，カーネルのスケーリングパラメータ
+extern double kappa; // UCBのトレードオフパラメータ
+
 extern VectorXd Ux0;
 extern VectorXd Lx0;
 extern VectorXd Uy0;
@@ -66,3 +69,4 @@ extern const int    ite_bc;	//分枝限定法の反復回数
 extern const double eps_bc; //分枝限定法のε
 
 extern       bool SDMorBFGS;	// argmaxの切り替え（SDM⇔BFGS）
+extern       bool EIorUCB;		// 取得関数の切り替え (EI⇔UCB)
