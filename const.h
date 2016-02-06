@@ -15,8 +15,10 @@ extern int d; // xの次元
 extern int m; // yの次元
 extern int n; // 対称行列のサイズ
 
-extern double theta; // Boxのサイズ，カーネルのスケーリングパラメータ
-extern double kappa; // UCBのトレードオフパラメータ
+extern const double xi;		// EIのトレードオフパラメータ
+extern const double kappa;	// UCBのトレードオフパラメータ
+
+extern double theta;	// Boxのサイズ，カーネルのスケーリングパラメータ
 
 extern VectorXd Ux0;
 extern VectorXd Lx0;
@@ -41,7 +43,6 @@ extern const int num_of_start; // BFGSの初期点の数
 
 extern       double mean;		// GPの事前分布
 extern const double sigma_thre; // u=0とする閾値
-extern const double xi;			// トレードオフパラメータ
 
 extern double maxf_BO;			// データセットの最大値（BO）
 extern double maxf_lsBO;		// データセットの最大値（lsBO）
@@ -68,5 +69,6 @@ extern const double eps_relax; //緩和問題のε
 extern const int    ite_bc;	//分枝限定法の反復回数
 extern const double eps_bc; //分枝限定法のε
 
-extern       bool SDMorBFGS;	// argmaxの切り替え（SDM⇔BFGS）
-extern       bool EIorUCB;		// 取得関数の切り替え (EI⇔UCB)
+extern bool SDMorBFGS;	// argmaxの切り替え（SDM⇔BFGS）
+extern bool EIorUCB;	// 取得関数の切り替え (EI⇔UCB)
+extern bool BOorlsBO;	// アルゴリズムの切り替え(BO⇔lsBO)

@@ -8,7 +8,7 @@ double mu(Eigen::VectorXd x);
 double sigma(Eigen::VectorXd x);
 double u(Eigen::VectorXd x);
 
-VectorXd u_over_k(VectorXd x);
+VectorXd u_over_k(VectorXd x, double sigma_);
 MatrixXd k_over_x(VectorXd x);
 VectorXd u_over_x(VectorXd x);
 

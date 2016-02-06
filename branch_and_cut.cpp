@@ -177,8 +177,8 @@ double branch_and_cut(clock_t* sample_time, double* sample_val){
 
 	for (int k = 0; k < ite_bc; k++){
 		cout << "k is " << k << endl;
+		cout << "List size before extraxt : " << List.size << endl;
 
-		//cout << "List size before extraxt : " << List.size << endl;
 		Q = List.extract();
 
 		maxL = List.maxL();

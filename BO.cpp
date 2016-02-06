@@ -103,10 +103,9 @@ double u(Eigen::VectorXd x){
 	}
 }
 
-VectorXd u_over_k(VectorXd x){
+VectorXd u_over_k(VectorXd x, double sigma_){
 
 	if (EIorUCB){
-		double sigma_ = sigma(x);
 		double mu_ = mu(x);
 		double gamma = (mu_ - maxf_BO - xi) / sigma_;
 
@@ -119,20 +118,12 @@ VectorXd u_over_k(VectorXd x){
 	}
 
 	else{
-		double sigma_ = sigma(x);
 		VectorXd v = VectorXd::Zero(t);
+		VectorXd m1 = VectorXd::Constant(t, mean);
 
-		if (sigma_ >= sigma_thre){
-			VectorXd m1 = VectorXd::Constant(t, mean);
+		v = f.head(t) - m1 - (kappa / sigma_)*k(x);
 
-			v = f.head(t) - m1 - (kappa / sigma_)*k(x);
-
-			return Kinv.topLeftCorner(t, t)*v;
-		}
-
-		else{
-			return v; // 0ƒxƒNƒgƒ‹
-		}
+		return Kinv.topLeftCorner(t, t)*v;
 	}
 }
 
@@ -145,11 +136,13 @@ MatrixXd k_over_x(VectorXd x){
 }
 
 VectorXd u_over_x(VectorXd x){
-	if (sigma(x) < sigma_thre)
+	double sigma_ = sigma(x);
+
+	if (sigma_ < sigma_thre)
 		return VectorXd::Zero(d);
 	
 	else
-		return k_over_x(x)*u_over_k(x);
+		return k_over_x(x)*u_over_k(x, sigma_);
 }
 
 pair<double, VectorXd> BO(clock_t* sample_time, double* sample_val){

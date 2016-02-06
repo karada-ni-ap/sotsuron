@@ -13,21 +13,32 @@ void vs_BO(int d_, int m_, int n_, int num){
 	double* sample_val_BC = new double[ite_bc];
 	
 	string s;
+	string type;
 
-	if (SDMorBFGS)
-		s = "BO" + to_string(d) + "_" + to_string(m) + "_" + to_string(n) + "SDM" + ".csv";
+	if (BOorlsBO)
+		type += "BO_with_";
 	else
-		s = "BO" + to_string(d) + "_" + to_string(m) + "_" + to_string(n) + "BFGS" + ".csv";
+		type += "lsBO_with_";
+
+	if (EIorUCB)
+		type += "EI_";
+	else
+		type += "UCB_";
+
+	s = type + to_string(d) + "_" + to_string(m) + "_" + to_string(n) + ".csv";
 
 	ofstream out;
 	out.open(s, ios::trunc);
 
 	out << d  << ", " << m << ", " << n << endl;
 	out << T  << ", " << ite_bc << endl;
-	out << xi << ", " << theta << endl;
+	out << xi << ", " << theta << ", " << sigma_thre << endl;
 
 	for (int num_ = 1; num_ <= num; num_++){
-		initA();
+		
+		//initA();
+		initA_byGoh();
+		
 		initialize_for_BO();
 
 		BO(sample_time_BO, sample_val_BO);
@@ -72,21 +83,31 @@ void vs_lsBO(int d_, int m_, int n_, int num){
 	double* sample_val_BC = new double[ite_bc];
 
 	string s;
+	string type;
 
-	if (SDMorBFGS)
-		s = "lsBO" + to_string(d) + "_" + to_string(m) + "_" + to_string(n) + "SDM" + ".csv";
+	if (BOorlsBO)
+		type += "BO_with_";
 	else
-		s = "lsBO" + to_string(d) + "_" + to_string(m) + "_" + to_string(n) + "BFGS" + ".csv";
+		type += "lsBO_with_";
+
+	if (EIorUCB)
+		type += "EI_";
+	else
+		type += "UCB_";
+
+	s = type + to_string(d) + "_" + to_string(m) + "_" + to_string(n) + ".csv";
 
 	ofstream out;
 	out.open(s, ios::trunc);
 
 	out << d << ", " << m << ", " << n << endl;
 	out << T << ", " << ite_bc << endl;
-	out << xi << ", " << theta << ", " << kappa << endl;
+	out << kappa << ", " << theta << ", " << sigma_thre << endl;
 
 	for (int num_ = 1; num_ <= num; num_++){
-		initA();
+		//initA();
+		initA_byGoh();
+
 		initialize_for_BO();
 
 		lsBO(sample_time_lsBO, sample_val_lsBO);

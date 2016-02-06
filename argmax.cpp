@@ -133,8 +133,9 @@ VectorXd sdm(VectorXd x0){
 }
 
 VectorXd argmax_u(){
-	if (t == 0){ //初期点はランダム
-		return bound_rand();
+	if (t == 0){
+		// return bound_rand();			// 初期点はランダム
+		return (1 / 2)*(Ux0 + Lx0);		// 初期点は原点
 	}
 
 	else{

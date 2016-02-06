@@ -7,6 +7,7 @@
 #include "argmax.h"
 #include "sev.h"
 #include "branch_and_cut.h"
+#include "problem.h"
 
 using namespace std;
 using namespace Eigen;

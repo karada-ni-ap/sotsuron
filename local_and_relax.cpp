@@ -30,6 +30,8 @@ double local_opt(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
 
 		max = tmp>max ? tmp : max;
 
+		cout << tmp << endl;
+
 		//Žû‘©”»’è
 		if (abs(tmp - pre) < eps_local)
 			break;
