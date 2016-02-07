@@ -18,12 +18,15 @@ extern int n; // 対称行列のサイズ
 extern const double xi;		// EIのトレードオフパラメータ
 extern const double kappa;	// UCBのトレードオフパラメータ
 
-extern double theta;	// Boxのサイズ，カーネルのスケーリングパラメータ
+extern double theta;	// カーネルのスケーリングパラメータ
 
+extern double box;
 extern VectorXd Ux0;
 extern VectorXd Lx0;
 extern VectorXd Uy0;
 extern VectorXd Ly0;
+
+extern const int N_sc; // 劣勾配法の停止条件
 
 extern const double alp0;	// バックトラック法のαの初期値
 extern const double eps_alp;// バックトラック法のαのbreak条件

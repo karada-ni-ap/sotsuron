@@ -4,11 +4,11 @@ Eigen::VectorXd k(Eigen::VectorXd x);
 void update_m();
 void update_K(Eigen::VectorXd x);
 
-double mu(Eigen::VectorXd x);
-double sigma(Eigen::VectorXd x);
+double mu(Eigen::VectorXd x, Eigen::VectorXd Kinvk);
+double sigma(Eigen::VectorXd x, Eigen::VectorXd Kinvk);
 double u(Eigen::VectorXd x);
 
-VectorXd u_over_k(VectorXd x, double sigma_);
+VectorXd u_over_k(VectorXd x, double sigma_, VectorXd Kinvk);
 MatrixXd k_over_x(VectorXd x);
 VectorXd u_over_x(VectorXd x);
 

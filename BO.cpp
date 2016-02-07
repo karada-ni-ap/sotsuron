@@ -60,21 +60,24 @@ void update_K(Eigen::VectorXd x){ // x = x_next‚ð‘z’è
 	}
 }
 
-double mu(Eigen::VectorXd x){
+double mu(Eigen::VectorXd x, Eigen::VectorXd Kinvk){
 	if (t == 0)
 		return mean;
 
 	else{
 		VectorXd m1 = VectorXd::Constant(t, mean);
-		VectorXd kx = k(x);
-		return mean + kx.transpose() * Kinv.topLeftCorner(t, t) * (f.head(t)-m1.head(t));
+		//VectorXd kx = k(x);
+		//return mean + kx.transpose() * Kinv.topLeftCorner(t, t) * (f.head(t)-m1.head(t));
+		return mean + Kinvk.transpose() * (f.head(t) - m1.head(t));
 	}
 }
 
 
-double sigma(Eigen::VectorXd x){
+double sigma(Eigen::VectorXd x, Eigen::VectorXd Kinvk){
 	VectorXd kx = k(x);
-	double sigma2 = 1 - kx.transpose() * Kinv.topLeftCorner(t, t) * kx;
+
+	//double sigma2 = 1 - kx.transpose() * Kinv.topLeftCorner(t, t) * kx;
+	double sigma2 = 1 - kx.transpose() * Kinvk;
 
 	if (sigma2 < 0)
 		return 0;
@@ -85,28 +88,31 @@ double sigma(Eigen::VectorXd x){
 
 
 double u(Eigen::VectorXd x){
-	double sigma_ = sigma(x);
+	FullPivLU<MatrixXd> solver(K.topLeftCorner(t, t));
+	VectorXd Kinvk = solver.solve(k(x));
+
+	double sigma_ = sigma(x, Kinvk);
 
 	if (EIorUCB){
 		if (sigma_ < sigma_thre)
 			return 0;
 
 		else{
-			double mu_ = mu(x);
+			double mu_ = mu(x, Kinvk);
 			double gamma = (mu_ - maxf_BO - xi) / sigma_;
 			return (mu_ - maxf_BO - xi)*cdf(gamma) + sigma_*pdf(gamma);
 		}
 	}
 
 	else{
-		return mu(x) + kappa * sigma_;
+		return mu(x, Kinvk) + kappa * sigma_;
 	}
 }
 
-VectorXd u_over_k(VectorXd x, double sigma_){
+VectorXd u_over_k(VectorXd x, double sigma_, VectorXd Kinvk){
 
 	if (EIorUCB){
-		double mu_ = mu(x);
+		double mu_ = mu(x, Kinvk);
 		double gamma = (mu_ - maxf_BO - xi) / sigma_;
 
 		VectorXd m1 = VectorXd::Constant(t, mean);
@@ -136,13 +142,16 @@ MatrixXd k_over_x(VectorXd x){
 }
 
 VectorXd u_over_x(VectorXd x){
-	double sigma_ = sigma(x);
+	FullPivLU<MatrixXd> solver(K.topLeftCorner(t, t));
+	VectorXd Kinvk = solver.solve(k(x));
+
+	double sigma_ = sigma(x, Kinvk);
 
 	if (sigma_ < sigma_thre)
 		return VectorXd::Zero(d);
 	
 	else
-		return k_over_x(x)*u_over_k(x, sigma_);
+		return k_over_x(x)*u_over_k(x, sigma_, Kinvk);
 }
 
 pair<double, VectorXd> BO(clock_t* sample_time, double* sample_val){
@@ -164,6 +173,7 @@ pair<double, VectorXd> BO(clock_t* sample_time, double* sample_val){
 		f(t) = sev_x(x_next, (Uy0 + Ly0) / 2, Uy0, Ly0).first;
 
 		if (f(t)>maxf_BO){
+			cout << "maxf is updated!" << endl;
 			x_opt = x_next;
 			maxf_BO = f(t);
 		}

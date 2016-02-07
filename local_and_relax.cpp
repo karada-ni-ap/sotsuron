@@ -113,13 +113,14 @@ double relaxation(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
 	double pre = -Inf;
 	double opt = -Inf;
 
+	double subgrad_norm = 0;
+
 	double alp0 = 1.0;
 	double alp = alp0;
 
-	for (int k = 0; k < ite_relax; k++){
-		//ステップサイズ
-		alp = alp0 / (k + 1);
+	int k_update = 0;
 
+	for (int k = 0; k < ite_relax; k++){
 		//prev
 		pre = min;
 		px  = x;
@@ -142,7 +143,13 @@ double relaxation(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
 		SelfAdjointEigenSolver<MatrixXd> es(Axy);
 		pn = es.eigenvectors().col(0);	//Axyの最小固有ベクトル
 		min = es.eigenvalues()(0);		//Axyの最小固有値
-		opt = min > opt ? min : opt;
+
+		cout << k << " 's relaxation : " << min << endl;
+
+		if (min > opt){
+			opt = min;
+			k_update = k;
+		}
 
 		//上昇方向
 		for (int i = 1; i <= d; i++){
@@ -155,23 +162,36 @@ double relaxation(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
 			}
 		}
 
+		subgrad_norm = norm(dx, dy, dW);
+
+		//ステップサイズ
+		//alp = alp0 / (k + 1);
+		//alp = alp0 / sqrt(k + 1);
+		alp = alp0 / subgrad_norm;
+
+
 		//x,y,Wの更新
 		x = projection(x + alp*dx, ux, lx);
 		y = projection(y + alp*dy, uy, ly);
 		W = projectionW(W + alp*dW, Pair.first, Pair.second);	
 
 		//収束判定
-		if (norm(dx, dy, dW) < eps_relax){
+		if (subgrad_norm < eps_relax){
 			//cout << "極値でbreak" << endl;
-			break;
+			//break;
 		}
 
 		if (abs(pre - min) < eps_relax && norm(px-x, py-y, pW-W) < eps_relax){
 			//cout << "境界でbreak" << endl;
+			//break;
+		}
+
+		if (k - k_update > N_sc){
 			break;
 		}
 
 	}
 
+	cout << "relax opt : " << opt << endl;
 	return opt;
 }

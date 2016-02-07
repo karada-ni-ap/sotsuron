@@ -65,17 +65,24 @@ pair<double, VectorXd> sev_x(VectorXd x, VectorXd y0, VectorXd U, VectorXd L){
 
 	VectorXd y     = y0; //劣勾配法の初期点
 	VectorXd y_pre = y0;
+	VectorXd y_opt = VectorXd::Zero(m);
 	VectorXd dir = VectorXd::Zero(m);
 
 	double min     = 0;
 	double min_pre = 0;
+	double opt = -Inf;
 
-	double   alp0 = 1.0;
+	double subgrad_norm = 0;
+
+	double   alp0 = 0.01;
 	double   alp  = alp0;
+
+	double h = 0.01;
+
+	int k_update = 0;
 
 	//yについて劣勾配法
 	for (int k = 0; k < ite_sev; k++){
-		alp     = alp0 / (k + 1);
 		min_pre = min;
 		y_pre   = y;
 
@@ -89,27 +96,61 @@ pair<double, VectorXd> sev_x(VectorXd x, VectorXd y0, VectorXd U, VectorXd L){
 		pn  = es.eigenvectors().col(0);	//Axyの最小固有ベクトル
 		min = es.eigenvalues()(0);		//Axyの最小固有値
 
+		//cout << k << " 's sev_x : " << min << endl;
+
+		if (min > opt){
+			//cout << "updating!" << endl;
+
+			y_opt = y;
+			k_update = k;
+			opt = min;
+		}
+
 		for (int j = 1; j <= m; j++){
 			dir(j - 1) = pn.transpose() * B[j] * pn;
 		}
+
+		//ステップサイズ
+		//alp = alp0 / sqrt(k + 1);
+		//alp = alp0 / (k + 1);
+		if (k < 10)
+			h = 10;
+		else if (k >= 10 && k < 20)
+			h = 1;
+		else if (k >= 20 && k < 30)
+			h = 0.1;
+		else
+			h = 0.01;
+
+		subgrad_norm = dir.norm();
+		alp = h / subgrad_norm;
+
 
 		//yの更新
 		y = projection(y + alp*dir, U, L);
 
 		//収束判定
-		if (dir.norm() < eps_sev){
+		if (subgrad_norm < eps_sev){
 			//cout << "極値でbreak" << endl;
-			break;
+			//break;
 		}
 
 		if ((y_pre - y).norm() < eps_sev && abs(min - min_pre) < eps_sev){
 			//cout << "境界でbreak" << endl;
+			//break;
+		}
+
+		if (k - k_update > N_sc){
+			cout << "k : " << k << endl;
 			break;
 		}
 
 	}
 
-	return make_pair(min, y_pre);
+	cout << "sev_x 's opt : " << opt << endl;
+
+	return make_pair(opt, y_opt);
+	//return make_pair(min, y_pre);
 }
 
 pair<double, VectorXd> sev_y(VectorXd y, VectorXd x0, VectorXd U, VectorXd L){

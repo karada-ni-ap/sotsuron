@@ -32,12 +32,12 @@ void vs_BO(int d_, int m_, int n_, int num){
 
 	out << d  << ", " << m << ", " << n << endl;
 	out << T  << ", " << ite_bc << endl;
-	out << xi << ", " << theta << ", " << sigma_thre << endl;
+	out << xi << ", " << theta << ", " << box << ", " << sigma_thre << endl;
 
 	for (int num_ = 1; num_ <= num; num_++){
 		
-		//initA();
-		initA_byGoh();
+		initA();
+		//initA_byGoh();
 		
 		initialize_for_BO();
 
@@ -102,11 +102,11 @@ void vs_lsBO(int d_, int m_, int n_, int num){
 
 	out << d << ", " << m << ", " << n << endl;
 	out << T << ", " << ite_bc << endl;
-	out << kappa << ", " << theta << ", " << sigma_thre << endl;
+	out << kappa << ", " << theta << ", " << box << ", " << sigma_thre << endl;
 
 	for (int num_ = 1; num_ <= num; num_++){
-		//initA();
-		initA_byGoh();
+		initA();
+		//initA_byGoh();
 
 		initialize_for_BO();
 
