@@ -18,6 +18,8 @@ double local_opt(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
 	double pre = 0;
 	double max = -Inf;
 	
+	//cout << "ls starts." << endl;
+
 	for (int k = 0; k < ite_local; k++){
 		X = sev_y(y, x, ux, lx);
 		x = X.second;
@@ -30,12 +32,14 @@ double local_opt(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
 
 		max = tmp>max ? tmp : max;
 
-		cout << tmp << endl;
+		//cout << tmp << endl;
 
 		//収束判定
 		if (abs(tmp - pre) < eps_local)
 			break;
 	}
+
+	//cout << "ls ends." << endl;
 
 	return max;
 }
@@ -95,10 +99,6 @@ double relaxation(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
 	VectorXd dx = VectorXd::Zero(d);
 	VectorXd dy = VectorXd::Zero(m);
 	MatrixXd dW = MatrixXd::Zero(d, m);
-
-	VectorXd px = VectorXd::Zero(d);
-	VectorXd py = VectorXd::Zero(m);
-	MatrixXd pW = MatrixXd::Zero(d, m);
 	
 	MatrixXd Axy = MatrixXd::Zero(n, n);
 	VectorXd pn  = VectorXd::Zero(n);
@@ -110,22 +110,18 @@ double relaxation(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
 	MatrixXd W = (Pair.first + Pair.second) / 2;
 
 	double min = -Inf;
-	double pre = -Inf;
 	double opt = -Inf;
 
 	double subgrad_norm = 0;
 
-	double alp0 = 1.0;
-	double alp = alp0;
+	double alp = 0.0;
+
+	double h = 0.0;
+	double h_conv = 1.0;
 
 	int k_update = 0;
 
 	for (int k = 0; k < ite_relax; k++){
-		//prev
-		pre = min;
-		px  = x;
-		py  = y;
-		pW  = W;
 
 		//Axyの構成
 		Axy = A[0][0];
@@ -144,7 +140,7 @@ double relaxation(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
 		pn = es.eigenvectors().col(0);	//Axyの最小固有ベクトル
 		min = es.eigenvalues()(0);		//Axyの最小固有値
 
-		cout << k << " 's relaxation : " << min << endl;
+		//cout << k << " 's relaxation : " << min << endl;
 
 		if (min > opt){
 			opt = min;
@@ -162,12 +158,10 @@ double relaxation(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
 			}
 		}
 
-		subgrad_norm = norm(dx, dy, dW);
-
 		//ステップサイズ
-		//alp = alp0 / (k + 1);
-		//alp = alp0 / sqrt(k + 1);
-		alp = alp0 / subgrad_norm;
+		h = h_rule(k, h_conv);
+		subgrad_norm = norm(dx, dy, dW);
+		alp = h / subgrad_norm;
 
 
 		//x,y,Wの更新
@@ -175,23 +169,14 @@ double relaxation(VectorXd ux, VectorXd lx, VectorXd uy, VectorXd ly){
 		y = projection(y + alp*dy, uy, ly);
 		W = projectionW(W + alp*dW, Pair.first, Pair.second);	
 
-		//収束判定
-		if (subgrad_norm < eps_relax){
-			//cout << "極値でbreak" << endl;
-			//break;
-		}
-
-		if (abs(pre - min) < eps_relax && norm(px-x, py-y, pW-W) < eps_relax){
-			//cout << "境界でbreak" << endl;
-			//break;
-		}
-
+		//停止条件の判定
 		if (k - k_update > N_sc){
+			//cout << "relax 's k : " << k << endl;
 			break;
 		}
 
 	}
 
-	cout << "relax opt : " << opt << endl;
+	//cout << "relax opt : " << opt << endl;
 	return opt;
 }

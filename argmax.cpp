@@ -108,8 +108,9 @@ VectorXd sdm(VectorXd x0){
 	VectorXd dir = VectorXd::Zero(d);
 
 	double alp = 0;
+	int k = 0;
 
-	for (int k = 0; k < ite_sdm; k++){
+	for (k = 0; k < ite_sdm; k++){
 		//ã¸
 		dir = u_over_x(Xnew);
 
@@ -129,6 +130,7 @@ VectorXd sdm(VectorXd x0){
 		}
 	}
 
+	//cout << "SDM's k : " << k << endl;
 	return Xnew;
 }
 

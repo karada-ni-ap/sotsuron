@@ -176,8 +176,8 @@ double branch_and_cut(clock_t* sample_time, double* sample_val){
 	clock_t start = clock();
 
 	for (int k = 0; k < ite_bc; k++){
-		cout << "k is " << k << endl;
-		cout << "List size before extraxt : " << List.size << endl;
+		//cout << "k is " << k << endl;
+		//cout << "List size before extraxt : " << List.size << endl;
 
 		Q = List.extract();
 
@@ -198,8 +198,12 @@ double branch_and_cut(clock_t* sample_time, double* sample_val){
 				//cout << Q12[i].Uy.transpose() << endl;
 				//cout << Q12[i].Ly.transpose() << endl;
 
-				if (Q12[i].Q_L > Q12[i].Q_U)
-					cout << "L > U (;_;)" << endl;
+				if (Q12[i].Q_L > Q12[i].Q_U){
+					cout << "L > U !?" << endl;
+					sample_time[k] = clock() - start;
+					sample_val[k] = Qopt.Q_L;
+					return Q12[i].Q_L;
+				}
 
 				if (Q12[i].Q_L > maxL)
 					maxL = Q12[i].Q_L;
@@ -218,10 +222,14 @@ double branch_and_cut(clock_t* sample_time, double* sample_val){
 			maxL = List.maxL();
 		}
 
+		maxU = List.root.next->Q_U;
+
 		sample_time[k] = clock() - start;
 		sample_val[k] = Qopt.Q_L;
 
-		maxU = List.root.next->Q_U;
+		if (sample_time[k] > time_limit)
+			break;
+
 
 		//Debug
 		cout << "maxU " << maxU << endl;

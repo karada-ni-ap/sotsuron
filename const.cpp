@@ -3,7 +3,7 @@
 extern const int Inf = 100000;
 
 extern		 int t=0;
-extern const int T=30;
+extern const int T=60;
 
 extern int d=5;
 extern int m=5;
@@ -21,6 +21,7 @@ extern VectorXd Uy0 = box	*VectorXd::Constant(m, 1.0);
 extern VectorXd Ly0 = -box	*VectorXd::Constant(m, 1.0);
 
 extern const int N_sc = 100;
+extern const clock_t time_limit= 1500000;
 
 extern const double alp0 = 1.0;
 extern const double eps_alp = 1.0e-10;
@@ -55,16 +56,16 @@ extern MatrixXd*  B = new MatrixXd [m + 1];
 extern MatrixXd*  C = new MatrixXd [d + 1];
 
 extern const int    ite_sev = 100000;
-extern const double eps_sev = 5.0e-3;
+//extern const double eps_sev = 5.0e-3;
 
 extern const int    ite_local = 100000;
 extern const double eps_local = 5.0e-3;
 
 extern const int    ite_relax = 100000;
-extern const double eps_relax = 5.0e-3;
+//extern const double eps_relax = 5.0e-3;
 
-extern const int    ite_bc = 50;
-extern const double eps_bc = 5.0e-3;
+extern const int    ite_bc = 1000;
+extern const double eps_bc = 1.0e-2;
 
 extern bool SDMorBFGS =	true;	// argmax‚ÌØ‚è‘Ö‚¦iSDMÌBFGS
 extern bool EIorUCB   =	true;	// æ“¾ŠÖ”‚ÌØ‚è‘Ö‚¦ (EIÌUCB)

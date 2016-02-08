@@ -26,7 +26,8 @@ extern VectorXd Lx0;
 extern VectorXd Uy0;
 extern VectorXd Ly0;
 
-extern const int N_sc; // 劣勾配法の停止条件
+extern const int N_sc;				// 劣勾配法の停止条件
+extern const clock_t time_limit;	// 実験を打ち切る時間
 
 extern const double alp0;	// バックトラック法のαの初期値
 extern const double eps_alp;// バックトラック法のαのbreak条件
@@ -61,13 +62,13 @@ extern MatrixXd*  B; //iについてのsum
 extern MatrixXd*  C; //jについてのsum
 
 extern const int    ite_sev; //劣勾配法の反復回数
-extern const double eps_sev; //劣勾配法のε
+//extern const double eps_sev; //劣勾配法のε
 
 extern const int    ite_local; //局所最適値関数の反復回数
 extern const double eps_local; //局所最適値関数のε
 
 extern const int    ite_relax; //緩和問題の反復回数
-extern const double eps_relax; //緩和問題のε
+//extern const double eps_relax; //緩和問題のε
 
 extern const int    ite_bc;	//分枝限定法の反復回数
 extern const double eps_bc; //分枝限定法のε

@@ -12,6 +12,25 @@ double kernel(Eigen::VectorXd x1, Eigen::VectorXd x2){
 	return exp( - (x1-x2).squaredNorm() / (2*theta*theta) );
 }
 
+double h_rule(int k, double h_conv){
+	double h;
+	
+	if (k < 10)
+		h = 10;
+	else if (k >= 10 && k < 20)
+		h = 5;
+	else if (k >= 20 && k < 30)
+		h = 1;
+	else if (k >= 30 && k < 40)
+		h = 0.5;
+	else if (k >= 40 && k < 50)
+		h = 0.1;
+	else
+		h = h_conv;
+
+	return h;
+}
+
 VectorXd bound_rand(){
 	VectorXd rand = VectorXd::Random(d);
 	VectorXd v	  = VectorXd::Zero(d);

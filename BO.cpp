@@ -46,6 +46,8 @@ void update_K(Eigen::VectorXd x){ // x = x_nextを想定
 		K.block(t,0,1,t) = kx.transpose();
 		K(t, t) = 1;
 
+		/*
+
 		//Ainv, Sinvの計算
 		MatrixXd Ainv = Kinv.topLeftCorner(t,t);
 		double S = 1 - kx.transpose()*Ainv*kx;
@@ -57,6 +59,8 @@ void update_K(Eigen::VectorXd x){ // x = x_nextを想定
 		Kinv.block(0, t, t, 1) = binv;
 		Kinv.block(t, 0, 1, t) = binv.transpose();
 		Kinv(t, t) = Sinv;
+		
+		*/
 	}
 }
 
@@ -178,12 +182,16 @@ pair<double, VectorXd> BO(clock_t* sample_time, double* sample_val){
 			maxf_BO = f(t);
 		}
 		//【この時点でデータセットのサイズはt+1】//
+		
+		update_K(x_next);
+		//【updateが行われた後，Kのサイズはt+1】//
 
 		sample_time[t] = clock() - start;
 		sample_val[t]  = maxf_BO;
 
-		update_K(x_next);
-		//【updateが行われた後，Kのサイズはt+1】//
+		if (sample_time[t] > time_limit)
+			break;
+
 	}
 
 	return make_pair(maxf_BO, x_opt);
