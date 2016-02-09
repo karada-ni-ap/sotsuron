@@ -15,19 +15,19 @@ int main(void){
 	EIorUCB  = true;
 	BOorlsBO = true;
 
-	int dmin = 3;
-	int dmax = 5;
+	int dmin = 10;
+	int dmax = 15;
 	
-	int mmin = 3;
-	int mmax = 5;
+	int mmin = 15;
+	int mmax = 15;
 
-	int nmin = 5;
-	int nmax = 5;
+	int nmin = 20;
+	int nmax = 20;
 
-	int num = 10;
+	int num = 3;
 
 
-	for (int d_ = dmin; d_ <= dmax; d_ += 2){
+	for (int d_ = dmin; d_ <= dmax; d_ += 5){
 		for (int m_ = mmin; m_ <= mmax; m_ += 2){
 			for (int n_ = nmin; n_ <= nmax; n_ +=1){
 				
